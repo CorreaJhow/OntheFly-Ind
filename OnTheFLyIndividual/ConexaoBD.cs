@@ -15,35 +15,143 @@ namespace OnTheFLyIndividual
         {
             conn = new SqlConnection(Conexao);
         }
-        public void Insert(string sql)
+        public string Caminho()
         {
-            conn.Open();
-            SqlCommand sqlCommand = new SqlCommand(sql, conn);
-            sqlCommand.ExecuteNonQuery();
-            Console.WriteLine("Dados inseridos com sucesso!");
-            Console.WriteLine("Aperte alguma tecla para prosseguir...");
-            Console.ReadKey();
-            conn.Close();
+            return Conexao;
         }
-        public void Update(string sql)
+        public void InserirDado(SqlConnection conecta, String sql)
         {
-            conn.Open();
-            SqlCommand sqlCommand = new SqlCommand(sql, conn);
-            sqlCommand.ExecuteNonQuery();
-            Console.WriteLine("Dados alterados com sucesso!");
-            Console.WriteLine("Aperte alguma tecla para prosseguir...");
-            Console.ReadKey();
-            conn.Close();
+            try
+            {
+                conecta.Open();
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.Connection = conecta;
+                cmd.ExecuteNonQuery();
+                conecta.Close();
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
-        public void Delete(string sql)
+        public void DeletarDado(SqlConnection conecta, String sql)
+        {
+            try
+            {
+                conecta.Open();
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.Connection = conecta;
+                cmd.ExecuteNonQuery();
+                conecta.Close();
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        public void EditarDado(SqlConnection conecta, String sql)
+        {
+            try
+            {
+                conecta.Open();
+                SqlCommand cmd = new SqlCommand(sql, conecta);
+                cmd.Connection = conecta;
+                cmd.ExecuteNonQuery();
+                conecta.Close();
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        public String LocalizarDado(SqlConnection conecta, String sql, int op)
+        {
+            switch (op)
+            {
+                case 1: //localizar passageiro 
+                    String recebe = "";
+                    try
+                    {
+                        conecta.Open();
+                        SqlCommand cmd = new SqlCommand(sql, conecta);
+                        SqlDataReader reader = null;
+                        using (reader = cmd.ExecuteReader())
+                        {
+                            Console.WriteLine("\n\t### Passageiro Localizado ###\n");
+                            while (reader.Read())
+                            {
+                                recebe = reader.GetString(0);
+                                Console.Write(" {0}", reader.GetString(0));
+                                Console.Write(" {0}", reader.GetString(1));
+                                Console.Write(" {0}", reader.GetDateTime(2).ToShortDateString());
+                                Console.Write(" {0}", reader.GetDateTime(3).ToShortDateString());
+                                Console.Write(" {0}", reader.GetString(4));
+                                Console.Write(" {0}", reader.GetString(5));
+                                Console.Write(" {0}", reader.GetDateTime(6).ToShortDateString());
+                                Console.WriteLine("\n");
+                            }
+                        }
+                        conecta.Close();
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    return recebe;
+                case 2:
+                    recebe = "";
+                    try
+                    {
+                        conecta.Open();
+                        SqlCommand cmd = new SqlCommand(sql, conecta);
+                        SqlDataReader reader = null;
+                        using (reader = cmd.ExecuteReader())
+                        {
+                            Console.WriteLine("\n\t### Voo Localizado ###\n");
+                            while (reader.Read())
+                            {
+                                recebe = reader.GetString(0);
+                                Console.Write(" {0}", reader.GetString(0));
+                                Console.WriteLine("\n");
+                            }
+                        }
+                        conecta.Close();
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    return recebe;
+                    break;
+                default:
+                    return null;
+                    break;
+            }
+        }
+        public int VerificarExiste(string sql)
         {
             conn.Open();
-            SqlCommand sqlCommand = new SqlCommand(sql, conn);
-            sqlCommand.ExecuteNonQuery();
-            Console.WriteLine("Dados deletados com sucesso!");
-            Console.WriteLine("Aperte alguma tecla para prosseguir...");
-            Console.ReadKey();
+            int count = 0;
+            SqlCommand sqlVerify = conn.CreateCommand();
+            sqlVerify.CommandText = sql;
+            sqlVerify.Connection = conn;
+            using (SqlDataReader reader = sqlVerify.ExecuteReader())
+            {
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        count++;
+                    }
+                }
+            }
+            if (count != 0)
+            {
+                conn.Close();
+                return 1;
+            }
             conn.Close();
+            return 0;
         }
     }
 }
