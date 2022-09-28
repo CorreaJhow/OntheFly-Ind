@@ -11,7 +11,6 @@ namespace OnTheFLyIndividual
         {
             Menu();
         }
-
         public static void Menu()
         {
             Console.Clear();
@@ -51,41 +50,44 @@ namespace OnTheFLyIndividual
         }
         public static void Voos()
         {
-            ConexaoBD cnx = new ConexaoBD();
-            SqlConnection conexaosql = new SqlConnection(cnx.Caminho());
-            Console.Clear();
-            Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Cadastrar\n[3] Localizar\n[4] Editar\n[5] Imprimir por registro\n[0] Sair");
-            int op = int.Parse(Console.ReadLine());
-            while (op < 0 || op > 5)
+            do
             {
-                Console.WriteLine("Opção inválida, informe novamente: ");
+
+                ConexaoBD cnx = new ConexaoBD();
+                SqlConnection conexaosql = new SqlConnection(cnx.Caminho());
+                Console.Clear();
                 Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Cadastrar\n[3] Localizar\n[4] Editar\n[5] Imprimir por registro\n[0] Sair");
-                op = int.Parse(Console.ReadLine());
-            }
-            switch (op)
-            {
-                case 0:
-                    Environment.Exit(0);
-                    break;
-                case 1:
-                    Menu();
-                    break;
-                case 2:                   
-                    voo.CadastrarVoo(conexaosql);
-                    break;
-                case 3:
-                    //localizar - select especifico
-                    voo.LocalizarVoo(conexaosql); //terminar edição
-                    break;
-                case 4:
-                    voo.AtualizarVoo(conexaosql);
-                    break;
-                case 5:
-                    //imprimir dado a dado (ativos) 
-                    break;
-                default:
-                    break;
-            }
+                int op = int.Parse(Console.ReadLine());
+                while (op < 0 || op > 5)
+                {
+                    Console.WriteLine("Opção inválida, informe novamente: ");
+                    Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Cadastrar\n[3] Localizar\n[4] Editar\n[5] Imprimir por registro\n[0] Sair");
+                    op = int.Parse(Console.ReadLine());
+                }
+                switch (op)
+                {
+                    case 0:
+                        Environment.Exit(0);
+                        break;
+                    case 1:
+                        Menu();
+                        break;
+                    case 2:
+                        voo.CadastrarVoo(conexaosql);
+                        break;
+                    case 3:
+                        voo.LocalizarVoo(conexaosql);
+                        break;
+                    case 4:
+                        voo.AtualizarVoo(conexaosql);
+                        break;
+                    case 5:
+                        //imprimir dado a dado (ativos) 
+                        break;
+                    default:
+                        break;
+                }
+            } while (true);
         }
 
         public static void CabecalhoOntheFly()

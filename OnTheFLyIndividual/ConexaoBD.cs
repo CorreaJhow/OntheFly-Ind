@@ -81,13 +81,13 @@ namespace OnTheFLyIndividual
                             while (reader.Read())
                             {
                                 recebe = reader.GetString(0);
-                                Console.Write(" {0}", reader.GetString(0));
-                                Console.Write(" {0}", reader.GetString(1));
-                                Console.Write(" {0}", reader.GetDateTime(2).ToShortDateString());
-                                Console.Write(" {0}", reader.GetDateTime(3).ToShortDateString());
-                                Console.Write(" {0}", reader.GetString(4));
-                                Console.Write(" {0}", reader.GetString(5));
-                                Console.Write(" {0}", reader.GetDateTime(6).ToShortDateString());
+                                Console.WriteLine(" {0}", reader.GetString(0));
+                                Console.WriteLine(" {0}", reader.GetString(1));
+                                Console.WriteLine(" {0}", reader.GetDateTime(2).ToShortDateString());
+                                Console.WriteLine(" {0}", reader.GetDateTime(3).ToShortDateString());
+                                Console.WriteLine(" {0}", reader.GetString(4));
+                                Console.WriteLine(" {0}", reader.GetString(5));
+                                Console.WriteLine(" {0}", reader.GetDateTime(6).ToShortDateString());
                                 Console.WriteLine("\n");
                             }
                         }
@@ -111,8 +111,12 @@ namespace OnTheFLyIndividual
                             while (reader.Read())
                             {
                                 recebe = reader.GetString(0);
-                                Console.Write(" {0}", reader.GetString(0));
-                                Console.WriteLine("\n");
+                                Console.WriteLine("{0}", reader.GetString(0)); //idVoo
+                                Console.WriteLine("{0}", reader.GetString(1)); //Aeronave
+                                Console.WriteLine("{0}", reader.GetDateTime(2).ToShortDateString()); //DataVoo
+                                Console.WriteLine("{0}", reader.GetDateTime(3).ToShortDateString()); //DataCadastro
+                                Console.WriteLine("{0}", reader.GetString(4)); //Destino
+                                Console.WriteLine("{0}", reader.GetString(5)); //Situacao 
                             }
                         }
                         conecta.Close();
