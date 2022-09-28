@@ -8,6 +8,6 @@ namespace OnTheFLyIndividual
 {
     internal class Aeronave
     {
-        public string inscricao { get; set; }
+        public string Inscricao { get; set; }
     }
 }

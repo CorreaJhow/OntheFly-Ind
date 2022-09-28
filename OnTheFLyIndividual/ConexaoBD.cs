@@ -68,7 +68,7 @@ namespace OnTheFLyIndividual
         {
             switch (op)
             {
-                case 1: //localizar passageiro 
+                case 1: //IMPRIMI PASSAGEIRO
                     String recebe = "";
                     try
                     {
@@ -79,15 +79,15 @@ namespace OnTheFLyIndividual
                         {
                             Console.WriteLine("\n\t### Passageiro Localizado ###\n");
                             while (reader.Read())
-                            {
+                            { 
                                 recebe = reader.GetString(0);
-                                Console.WriteLine(" {0}", reader.GetString(0));
-                                Console.WriteLine(" {0}", reader.GetString(1));
-                                Console.WriteLine(" {0}", reader.GetDateTime(2).ToShortDateString());
-                                Console.WriteLine(" {0}", reader.GetDateTime(3).ToShortDateString());
-                                Console.WriteLine(" {0}", reader.GetString(4));
-                                Console.WriteLine(" {0}", reader.GetString(5));
-                                Console.WriteLine(" {0}", reader.GetDateTime(6).ToShortDateString());
+                                Console.WriteLine("Cpf: {0}", reader.GetString(0));  
+                                Console.WriteLine("Nome: {0}", reader.GetString(1)); 
+                                Console.WriteLine("Data Nascimento: {0}", reader.GetDateTime(2).ToShortDateString());
+                                Console.WriteLine("Data Cadastro: {0}", reader.GetDateTime(3).ToShortDateString());
+                                Console.WriteLine("Sexo: {0}", reader.GetString(4));
+                                Console.WriteLine("Situacao: {0}", reader.GetString(5));
+                                Console.WriteLine("Ultima Compra: {0}", reader.GetDateTime(6).ToShortDateString());
                                 Console.WriteLine("\n");
                             }
                         }
@@ -98,7 +98,7 @@ namespace OnTheFLyIndividual
                         Console.WriteLine(ex.Message);
                     }
                     return recebe;
-                case 2:
+                case 2: //IMPRIMI VOO 
                     recebe = "";
                     try
                     {
@@ -111,12 +111,12 @@ namespace OnTheFLyIndividual
                             while (reader.Read())
                             {
                                 recebe = reader.GetString(0);
-                                Console.WriteLine("{0}", reader.GetString(0)); //idVoo
-                                Console.WriteLine("{0}", reader.GetString(1)); //Aeronave
-                                Console.WriteLine("{0}", reader.GetDateTime(2).ToShortDateString()); //DataVoo
-                                Console.WriteLine("{0}", reader.GetDateTime(3).ToShortDateString()); //DataCadastro
-                                Console.WriteLine("{0}", reader.GetString(4)); //Destino
-                                Console.WriteLine("{0}", reader.GetString(5)); //Situacao 
+                                Console.WriteLine("Id de Voo: {0}", reader.GetString(0)); //idVoo
+                                Console.WriteLine("Aeronave: {0}", reader.GetString(1)); //Aeronave
+                                Console.WriteLine("Data de Voo: {0}", reader.GetDateTime(2).ToShortDateString()); //DataVoo
+                                Console.WriteLine("Data de Cadastro: {0}", reader.GetDateTime(3).ToShortDateString()); //DataCadastro
+                                Console.WriteLine("Destino: {0}", reader.GetString(4)); //Destino
+                                Console.WriteLine("Situacao: {0}", reader.GetString(5)); //Situacao 
                             }
                         }
                         conecta.Close();
@@ -126,10 +126,8 @@ namespace OnTheFLyIndividual
                         Console.WriteLine(ex.Message);
                     }
                     return recebe;
-                    break;
                 default:
                     return null;
-                    break;
             }
         }
         public int VerificarExiste(string sql)

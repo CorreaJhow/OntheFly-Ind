@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OnTheFLyIndividual
@@ -60,51 +61,60 @@ namespace OnTheFLyIndividual
         public void CadastrarVoo(SqlConnection conexaosql)
         {
             Aeronave aeronave = new Aeronave();
-            //bool existeAeronave = aeronave.ExisteAeronave();
-            //if (!existeAeronave)
-            //{
-            Console.Clear();
-            Console.WriteLine("-----------------------------");
-            Console.WriteLine("Bem vindo ao cadastro de voo.");
-            Console.WriteLine("-----------------------------");
-            int valorId = RandomCadastroVoo();
-            this.Id = "V" + valorId.ToString("D4");
-            Destino = DestinoVoo();
-            aeronave.inscricao = "123";
-            //Console.WriteLine("Aeronave definida como: "); //aeronave.Inscricao
-            Console.WriteLine("Informe a data e hora d Voo: (dd/MM/yyyy hh:mm) ");
-            this.DataVoo = DateTime.Parse(Console.ReadLine());
-            if (DataVoo <= DateTime.Now)
+            string sql = "Select InscricaoANAC from Aeronave;";
+            int verificar = conexao.VerificarExiste(sql);
+            if (verificar != 0)
             {
-                Console.WriteLine("Essa data é inválida, informe novamente: ");
-                DataVoo = DateTime.Parse(Console.ReadLine());
-            }
-            this.DataCadastro = DateTime.Now;
-            Console.WriteLine("Data de cadastro definifida como: " + DataCadastro);
-            Console.WriteLine("Informe a situacao do Voo: \n[A] Ativo \n[C] Cancelado");
-            Situacao = char.Parse(Console.ReadLine().ToUpper());
-            while (Situacao != 'A' && Situacao != 'C')
-            {
-                Console.WriteLine("O valor informado é inválido, por favor informe novamente!\n[A] Ativo \n[C] Cancelado");
+                Console.Clear();
+                Console.WriteLine("-----------------------------");
+                Console.WriteLine("Bem vindo ao cadastro de voo.");
+                Console.WriteLine("-----------------------------");
+                int valorId = RandomCadastroVoo();
+                this.Id = "V" + valorId.ToString("D4");
+                Destino = DestinoVoo();
+                Console.WriteLine("Insira o nome do aeronave: ");
+                aeronave.Inscricao = Console.ReadLine();
+                sql = "select InscricaoANAC from Aeronave where InscricaoANAC = '" + aeronave.Inscricao + "';";
+                verificar = conexao.VerificarExiste(sql);
+                while (verificar == 0)
+                {
+                    Console.WriteLine("Essa aeronave nao existe, informe outra: ");
+                    aeronave.Inscricao = Console.ReadLine();
+                    sql = "select InscricaoANAC from Aeronave where InscricaoANAC = '" + aeronave.Inscricao + "';";
+                    verificar = conexao.VerificarExiste(sql);
+                }
+                Console.WriteLine("Informe a data e hora d Voo: (dd/MM/yyyy hh:mm) ");
+                this.DataVoo = DateTime.Parse(Console.ReadLine());
+                if (DataVoo <= DateTime.Now)
+                {
+                    Console.WriteLine("Essa data é inválida, informe novamente: ");
+                    DataVoo = DateTime.Parse(Console.ReadLine());
+                }
+                this.DataCadastro = DateTime.Now;
+                Console.WriteLine("Data de cadastro definifida como: " + DataCadastro);
+                Console.WriteLine("Informe a situacao do Voo: \n[A] Ativo \n[C] Cancelado");
                 Situacao = char.Parse(Console.ReadLine().ToUpper());
+                while (Situacao != 'A' && Situacao != 'C')
+                {
+                    Console.WriteLine("O valor informado é inválido, por favor informe novamente!\n[A] Ativo \n[C] Cancelado");
+                    Situacao = char.Parse(Console.ReadLine().ToUpper());
+                }
+                sql = "insert into Voo (Id, InscricaoAeronave, DataCadastro, Situacao, DataVoo, Destino) values ('" + this.Id + "', '" + aeronave.Inscricao + "', '" +
+                this.DataCadastro + "', '" + this.Situacao + "', '" + this.DataVoo + "', '" + this.Destino + "');";
+                Console.WriteLine("Comando executado no SQL\n");
+                Console.WriteLine(sql);
+                Console.ReadKey();
+
+                conexao.InserirDado(conexaosql, sql);
+                Console.WriteLine("Inscrição de Voo realizada com sucesso!");
             }
-            string sql = "insert into Voo (Id, InscricaoAeronave, DataCadastro, Situacao, DataVoo, Destino) values ('" + this.Id + "', '" + aeronave.inscricao + "', '" +
-            this.DataCadastro + "', '" + this.Situacao + "', '" + this.DataVoo + "', '" + this.Destino + "');";
-            Console.WriteLine("Comando executado no SQL\n");
-            Console.WriteLine(sql);
-            Console.ReadKey();
-
-            conexao.InserirDado(conexaosql, sql);
-            Console.WriteLine("Inscrição de Voo realizada com sucesso!");
-
-            //}
-            //else if (existeAeronave)
-            //{
-            //    Console.Clear();
-            //    Console.WriteLine("Desculpa, impossível cadastrar voo, pois nao temos nenhuma aeronave Ativa Cadastrada");
-            //    Console.WriteLine("Pressione uma tecla para prosseguir");
-            //    Console.ReadKey();
-            //}
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("Desculpa, impossível cadastrar voo, pois nao temos nenhuma aeronave Ativa Cadastrada");
+                Console.WriteLine("Pressione uma tecla para prosseguir");
+                Console.ReadKey();
+            }
         }
         public string DestinoVoo()
         {
@@ -215,12 +225,64 @@ namespace OnTheFLyIndividual
                 Console.ReadKey();
             }
         }
+        public void RegistroPorRegistro(SqlConnection conecta)
+        {
+            List<string> voo = new();
+            conecta.Open();
+            string sql = "Select Id, InscricaoAeronave, DataVoo, DataCadastro, Destino, Situacao from Voo";
+            SqlCommand cmd = new SqlCommand(sql, conecta);
+            SqlDataReader reader = null;
+            using (reader = cmd.ExecuteReader())
+            {
+                Console.WriteLine("\n\t### Voo Localizado ###\n");
+                while (reader.Read())
+                {
+                    if (reader.GetString(5) == "A")
+                    {
+                        voo.Add(reader.GetString(0));
+                    }
+                }
+            }
+            conecta.Close();
+            for (int i = 0; i < voo.Count; i++)
+            {
+                string op;
+                do
+                {
+                    Console.Clear();
+                    Console.WriteLine(">>> Voos <<<\nDigite para navegar:\n[1] Próximo Cadasatro\n[2] Cadastro Anterior" +
+                        "\n[3] Último cadastro\n[4] Voltar ao Início\n[s] Sair\n");
+                    Console.WriteLine($"Cadastro [{i + 1}] de [{voo.Count}]");
+                    //Imprimi o primeiro da lista
+                    string query = "Select Id, InscricaoAeronave, DataVoo, DataCadastro, Destino, Situacao from Voo where Id = '" + voo[i] + "';";
+                    conexao.LocalizarDado(conecta, query, 2);
+                    Console.Write("Opção: ");
+                    op = Console.ReadLine();
+                    if (op != "1" && op != "2" && op != "3" && op != "4" && op != "s")
+                    {
+                        Console.WriteLine("Opção inválida!");
+                        Thread.Sleep(2000);
+                    }
+                    //Sai do método
+                    else if (op.Contains("s"))
+                        return;
+                    //Volta no Cadastro Anterior
+                    else if (op.Contains("2"))
+                        if (i == 0)
+                            i = 0;
+                        else
+                            i--;
+                    //Vai para o fim da lista
+                    else if (op.Contains("3"))
+                        i = voo.Count - 1;
+                    //Volta para o inicio da lista
+                    else if (op.Contains("4"))
+                        i = 0;
+                    //Vai para o próximo da lista
+                } while (op != "1");
+                if (i == voo.Count - 1)
+                    i--;
+            }
+        }
     }
-    //Terminar localizar dado especifico e imprimir o voo [ok]
-    //Terminar o Imprimir registro por registro (menu de cadastro aviao por aviao, pausa e chama menu)
-    //Linkar Classe Aeronave
-    //inserir aeronave no cadastro de voo | Verificar se existe pra realizar o cadastro 
-    //Verificar se aeronave existe [OK]
-    //Inserir Aeronave no banco de dados para funcionar [OK]
-    
 }

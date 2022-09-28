@@ -15,7 +15,7 @@ namespace OnTheFLyIndividual
         {
             Console.Clear();
             CabecalhoOntheFly();
-            Console.WriteLine("Escolha a opção desejada:\n\n[1] Vender Passagem\n[2] Cliente\n[3] Cia.Aérea\n[4] Destinos\n[5] Vôos\n[6] Aviões\n[0] Sair");
+            Console.WriteLine("Escolha a opção desejada:\n\n[1] Vender Passagem\n[2] Cliente\n[3] Cia.Aérea\n[4] Vôos\n[5] Aviões\n[0] Sair");
             int op = int.Parse(Console.ReadLine());
             while (op < 0 || op > 6)
             {
@@ -36,12 +36,9 @@ namespace OnTheFLyIndividual
                     //CiaAerea();
                     break;
                 case 4:
-                    //Destinos();
-                    break;
-                case 5:
                     Voos();
                     break;
-                case 6:
+                case 5:
                     //Avioes();
                     break;
                 default:
@@ -52,7 +49,6 @@ namespace OnTheFLyIndividual
         {
             do
             {
-
                 ConexaoBD cnx = new ConexaoBD();
                 SqlConnection conexaosql = new SqlConnection(cnx.Caminho());
                 Console.Clear();
@@ -74,15 +70,19 @@ namespace OnTheFLyIndividual
                         break;
                     case 2:
                         voo.CadastrarVoo(conexaosql);
+                        PressioneContinuar();
                         break;
                     case 3:
                         voo.LocalizarVoo(conexaosql);
+                        PressioneContinuar();
                         break;
                     case 4:
                         voo.AtualizarVoo(conexaosql);
+                        PressioneContinuar();
                         break;
                     case 5:
-                        //imprimir dado a dado (ativos) 
+                        voo.RegistroPorRegistro(conexaosql);
+                        PressioneContinuar();
                         break;
                     default:
                         break;
@@ -95,6 +95,11 @@ namespace OnTheFLyIndividual
             Console.WriteLine("------------------------------------------------------------------------------------------------------------------------");
             Console.WriteLine("                                                      On the Fly");
             Console.WriteLine("------------------------------------------------------------------------------------------------------------------------");
+        }
+        public static void PressioneContinuar()
+        {
+            Console.WriteLine("Pressione uma tecla para continuar: ");
+            Console.ReadKey();
         }
     }
 }
