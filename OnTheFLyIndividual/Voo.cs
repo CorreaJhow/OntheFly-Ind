@@ -25,7 +25,7 @@ namespace OnTheFLyIndividual
         public Voo(string destino, DateTime dataVoo, DateTime dataCadastro, char situacaoVoo)
         {
             int valorId = RandomCadastroVoo();
-            this.Id = "V" + valorId.ToString("D4");
+            this.Id = "V" + valorId.ToString();
             this.Destino = destino;
             this.Aeronave = null;
             this.DataVoo = dataVoo;

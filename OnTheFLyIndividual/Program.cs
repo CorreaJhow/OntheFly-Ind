@@ -7,6 +7,7 @@ namespace OnTheFLyIndividual
     internal class Program
     {
         static Voo voo = new Voo();
+        static PassagemVoo passagem = new PassagemVoo();
         static void Main(string[] args)
         {
             Menu();
@@ -28,6 +29,7 @@ namespace OnTheFLyIndividual
                     Environment.Exit(0);
                     break;
                 case 1:
+                    Passagem();
                     break;
                 case 2:
                     //Cliente();
@@ -52,6 +54,8 @@ namespace OnTheFLyIndividual
                 ConexaoBD cnx = new ConexaoBD();
                 SqlConnection conexaosql = new SqlConnection(cnx.Caminho());
                 Console.Clear();
+                CabecalhoOntheFly();
+                Console.WriteLine("### Menu de Voo ###");
                 Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Cadastrar\n[3] Localizar\n[4] Editar\n[5] Imprimir por registro\n[0] Sair");
                 int op = int.Parse(Console.ReadLine());
                 while (op < 0 || op > 5)
@@ -89,7 +93,6 @@ namespace OnTheFLyIndividual
                 }
             } while (true);
         }
-
         public static void CabecalhoOntheFly()
         {
             Console.WriteLine("------------------------------------------------------------------------------------------------------------------------");
@@ -100,6 +103,52 @@ namespace OnTheFLyIndividual
         {
             Console.WriteLine("Pressione uma tecla para continuar: ");
             Console.ReadKey();
+        }
+        public static void Passagem()
+        {
+            do
+            {
+                ConexaoBD cnx = new ConexaoBD();
+                SqlConnection conexaosql = new SqlConnection(cnx.Caminho());
+                Console.Clear();
+                CabecalhoOntheFly();
+                Console.WriteLine("### Menu de Passagem ###");
+                Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Cadastrar\n[3] Localizar\n[4] Editar\n[5] Imprimir por registro\n[0] Sair");
+                int op = int.Parse(Console.ReadLine());
+                while (op < 0 || op > 5)
+                {
+                    Console.WriteLine("Opção inválida, informe novamente: ");
+                    Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Cadastrar\n[3] Localizar\n[4] Editar\n[5] Imprimir por registro\n[0] Sair");
+                    op = int.Parse(Console.ReadLine());
+                }
+                switch (op)
+                {
+                    case 0:
+                        Environment.Exit(0);
+                        break;
+                    case 1:
+                        Menu();
+                        break;
+                    case 2:
+                        //cadastrar
+                        PressioneContinuar();
+                        break;
+                    case 3:
+                        //localizar
+                        PressioneContinuar();
+                        break;
+                    case 4:
+                        //editar
+                        PressioneContinuar();
+                        break;
+                    case 5:
+                        //imprimir por registro 
+                        PressioneContinuar();
+                        break;
+                    default:
+                        break;
+                }
+            } while (true);
         }
     }
 }

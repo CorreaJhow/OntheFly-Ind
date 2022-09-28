@@ -215,7 +215,6 @@ namespace OnTheFLyIndividual
                         Console.WriteLine("\nDigite uma opcao valida:");
                         Console.Write("\nDigite: ");
                         opc = int.Parse(Console.ReadLine());
-
                     }
                     switch (opc)
                     {
