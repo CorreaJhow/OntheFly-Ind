@@ -8,8 +8,7 @@ using OnTheFLyIndividual;
 namespace Proj_ON_THE_FLY
 {
     internal class Aeronave
-    {
-        //Metodo de localizar, editar (remover o inserir CNPJ da empresa). 
+    { 
         public String Inscricao { get; set; }
         public String Capacidade { get; set; }
         public DateTime UltimaVenda = DateTime.Now;
@@ -49,7 +48,7 @@ namespace Proj_ON_THE_FLY
         {
             Console.WriteLine("\n*** Cadastro de Aeronave ***");
             Console.WriteLine("Informe o CNPJ da Companhia Aerea: ");//pedir o cnpj procurar na tbela companhia e se tiver agrupar na variavel
-            this.CNPJ = Console.ReadLine();//"15086511000145";
+            this.CNPJ = Console.ReadLine(); //"15086511000145";
             string sql = "Select CNPJ from CompanhiaAerea where CNPJ = '" + this.CNPJ + "';";
             int verificar = banco.VerificarExiste(sql);
             while(verificar == 0)

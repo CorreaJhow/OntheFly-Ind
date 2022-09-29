@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Proj_ON_THE_FLY;
 
@@ -45,7 +47,6 @@ namespace OnTheFLyIndividual
             }
             return aux;
         }
-
         public void CadastrarPassagem()
         {
             Voo voo = new Voo();
@@ -89,19 +90,159 @@ namespace OnTheFLyIndividual
             }
         }
         //Atualizar/Editar Passagem
-        public void AtualizarPassagem()
+        public void AtualizarPassagem(SqlConnection conexaosql)
         {
-
+            int opc = 0;
+            Console.Clear();
+            Console.WriteLine("### Atualizar Passagem ###");
+            Console.WriteLine("Informe o ID da passagem (PA0000 – Dois dígitos PA, seguidos de 4 dígitos numéricos:");
+            string id = Console.ReadLine();
+            string query = "select Id, IdVoo from Passagem where id = '" + id + "';";
+            int verificar = conexao.VerificarExiste(query);
+            if (verificar == 0)
+            {
+                Console.WriteLine("Passagem nao localizada!!\nPressione alguma tecla pra prosseguir.");
+                Console.ReadKey();
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("### Alterar Passagem ###");
+                Console.WriteLine("\nDigite a Opção que Deseja Editar");
+                Console.WriteLine("[1] Ultima Data Alterada");
+                Console.WriteLine("[2] Situacao");
+                Console.WriteLine("[3] Valor");
+                Console.Write("\nDigite: ");
+                opc = int.Parse(Console.ReadLine());
+                while (opc < 1 || opc > 3)
+                {
+                    Console.WriteLine("\nDigite uma Opcao Valida:");
+                    Console.Write("\nDigite: ");
+                    opc = int.Parse(Console.ReadLine());
+                }
+                switch (opc)
+                {
+                    case 1:
+                        Console.Clear();
+                        Console.WriteLine("### Alterar Passagem ###");
+                        Console.WriteLine("Data alterada com sucesso! ");
+                        this.DataUltimaOperacao = DateTime.Now;
+                        string sql = "update Passagem set DataUltimaOperacao = '" + this.DataUltimaOperacao + "' where Id = '" + id + "';";
+                        conexao.EditarDado(conexaosql, sql);
+                        Program.PressioneContinuar();
+                        break;
+                    case 2:
+                        Console.Clear();
+                        Console.WriteLine("### Alterar Passagem ###");
+                        Console.WriteLine("Informe a nova situacao (L – Livre, R – Reservada ou P – Paga): ");
+                        this.SituacaoPassagem = Console.ReadLine();
+                        while(this.SituacaoPassagem != "L" && this.SituacaoPassagem != "R" && this.SituacaoPassagem != "P")
+                        {
+                            Console.WriteLine("Situacao de passagem inválida informada, digite o novamente: ");
+                            this.SituacaoPassagem = Console.ReadLine();
+                        }
+                        sql = "update Passagem set Situacao = '" + this.DataUltimaOperacao + "' where Id = '" + id + "';";
+                        conexao.EditarDado(conexaosql, sql);
+                        Program.PressioneContinuar();
+                        break;
+                    case 3:
+                        Console.Clear();
+                        Console.WriteLine("### Alterar Passagem ###");
+                        Console.WriteLine("informe o novo valor da passagem: ");
+                        this.Valor = float.Parse(Console.ReadLine());
+                        while (this.Valor < 100 || this.Valor > 999.99)
+                        {
+                            Console.WriteLine("Valor inválido informado, tente novamente: ");
+                            this.Valor = float.Parse(Console.ReadLine());
+                        }
+                        sql = "update Passagem set Valor = '" + this.Valor + "' where Id = '" + id + "';";
+                        conexao.EditarDado(conexaosql, sql);
+                        Program.PressioneContinuar();
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
         //LocalizarPassagem
-        public void LocalizarPassagem()
+        public void LocalizarPassagem(SqlConnection conexaosql)
         {
-
+            Console.Clear();
+            Console.WriteLine("### Localizar Passagem ###");
+            Console.WriteLine("Informe o ID da passagem (PA0000 – Dois dígitos PA, seguidos de 4 dígitos numéricos:");
+            string id = Console.ReadLine();
+            string query = "select Id, IdVoo from Passagem where id = '" + id + "';";
+            int verificar = conexao.VerificarExiste(query);
+            if(verificar == 0)
+            {
+                Console.WriteLine("Passagem nao localizada!!\nPressione alguma tecla pra prosseguir.");
+                Console.ReadKey();
+            }
+            else
+            {
+                string sql = "select Id, IdVoo, DataUltimaOperacao, Valor, Situacao from Passagem where id = '"+id+"';";
+                conexao.LocalizarDado(conexaosql, sql,5);
+            }
         }
         //RegistroPorRegistro
-        public void RegistroPorRegistro()
+        public void RegistroPorRegistro(SqlConnection conecta)
         {
-
+            List<string> Passagem = new();
+            conecta.Open();
+            string sql = "Select Id, InscricaoAeronave, DataVoo, DataCadastro, Destino, Situacao from Voo";
+            SqlCommand cmd = new SqlCommand(sql, conecta);
+            SqlDataReader reader = null;
+            using (reader = cmd.ExecuteReader())
+            {
+                Console.WriteLine("\n\t### Voo Localizado ###\n");
+                while (reader.Read())
+                {
+                    if (reader.GetString(5) == "A")
+                    {
+                        Passagem.Add(reader.GetString(0));
+                    }
+                }
+            }
+            conecta.Close();
+            for (int i = 0; i < Passagem.Count; i++)
+            {
+                string op;
+                do
+                {
+                    Console.Clear();
+                    Console.WriteLine(">>> Voos <<<\nDigite para navegar:\n[1] Próximo Cadasatro\n[2] Cadastro Anterior" +
+                        "\n[3] Último cadastro\n[4] Voltar ao Início\n[s] Sair\n");
+                    Console.WriteLine($"Cadastro [{i + 1}] de [{Passagem.Count}]");
+                    //Imprimi o primeiro da lista
+                    string query = "Select Id, InscricaoAeronave, DataVoo, DataCadastro, Destino, Situacao from Voo where Id = '" + Passagem[i] + "';";
+                    conexao.LocalizarDado(conecta, query, 2);
+                    Console.Write("Opção: ");
+                    op = Console.ReadLine();
+                    if (op != "1" && op != "2" && op != "3" && op != "4" && op != "s")
+                    {
+                        Console.WriteLine("Opção inválida!");
+                        Thread.Sleep(2000);
+                    }
+                    //Sai do método
+                    else if (op.Contains("s"))
+                        return;
+                    //Volta no Cadastro Anterior
+                    else if (op.Contains("2"))
+                        if (i == 0)
+                            i = 0;
+                        else
+                            i--;
+                    //Vai para o fim da lista
+                    else if (op.Contains("3"))
+                        i = Passagem.Count - 1;
+                    //Volta para o inicio da lista
+                    else if (op.Contains("4"))
+                        i = 0;
+                    //Vai para o próximo da lista
+                } while (op != "1");
+                if (i == Passagem.Count - 1)
+                    i--;
+            }
         }
     }
 }

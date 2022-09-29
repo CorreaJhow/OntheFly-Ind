@@ -12,6 +12,7 @@ namespace OnTheFLyIndividual
         static PassagemVoo passagem = new PassagemVoo();
         static Aeronave aeronave = new Aeronave();
         static CompanhiaAerea cia = new CompanhiaAerea();
+        static PassagemVoo passagemvoo = new PassagemVoo();
         static void Main(string[] args)
         {
             Menu();
@@ -22,7 +23,7 @@ namespace OnTheFLyIndividual
             SqlConnection conexaosql = new SqlConnection(cnx.Caminho());
             Console.Clear();
             CabecalhoOntheFly();
-            Console.WriteLine("Escolha a opção desejada:\n\n[1] Vender Passagem\n[2] Cliente\n[3] Cia.Aérea\n[4] Vôos\n[5] Aviões\n[0] Sair");
+            Console.WriteLine("Escolha a opção desejada:\n\n[1] Passagem\n[2] Passageiro\n[3] Cia.Aérea\n[4] Vôos\n[5] Aeronave\n[0] Sair");
             int op = int.Parse(Console.ReadLine());
             while (op < 0 || op > 6)
             {
@@ -140,14 +141,17 @@ namespace OnTheFLyIndividual
                         PressioneContinuar();
                         break;
                     case 3:
+                        passagemvoo.LocalizarPassagem(conexaosql);
                         //localizar
                         PressioneContinuar();
                         break;
                     case 4:
+                        passagemvoo.AtualizarPassagem(conexaosql);
                         //editar
                         PressioneContinuar();
                         break;
                     case 5:
+                        passagemvoo.RegistroPorRegistro(conexaosql);
                         //imprimir por registro 
                         PressioneContinuar();
                         break;

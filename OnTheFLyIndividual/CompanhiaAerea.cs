@@ -6,8 +6,6 @@ namespace OnTheFly_BD
 {
     internal class CompanhiaAerea
     {
-        //MenuBloqueados (Todos metodos) 
-
         public String Cnpj { get; set; }
         public String RazaoSocial { get; set; }
         public DateTime DataAbertura { get; set; }

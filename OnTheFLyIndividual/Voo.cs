@@ -84,7 +84,7 @@ namespace OnTheFLyIndividual
                     sql = "select InscricaoANAC from Aeronave where InscricaoANAC = '" + aeronave.Inscricao + "';";
                     verificar = conexao.VerificarExiste(sql);
                 }
-                Console.WriteLine("Informe a data e hora d Voo: (dd/MM/yyyy hh:mm) ");
+                Console.WriteLine("Informe a data e hora do Voo: (dd/MM/yyyy hh:mm) ");
                 this.DataVoo = DateTime.Parse(Console.ReadLine());
                 if (DataVoo <= DateTime.Now)
                 {
@@ -102,8 +102,8 @@ namespace OnTheFLyIndividual
                 }
                 sql = "insert into Voo (Id, InscricaoAeronave, DataCadastro, Situacao, DataVoo, Destino) values ('" + this.Id + "', '" + aeronave.Inscricao + "', '" +
                 this.DataCadastro + "', '" + this.Situacao + "', '" + this.DataVoo + "', '" + this.Destino + "');";
-                Console.WriteLine("Comando executado no SQL\n");
-                Console.WriteLine(sql);
+                Console.WriteLine("Comando executado no SQL\n"); //tirar dps 
+                Console.WriteLine(sql); //tirar dps 
                 Console.ReadKey();
                 conexao.InserirDado(conexaosql, sql);
                 Console.WriteLine("Inscrição de Voo realizada com sucesso!");

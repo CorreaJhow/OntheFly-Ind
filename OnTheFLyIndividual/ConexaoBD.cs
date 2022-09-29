@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -140,7 +141,7 @@ namespace OnTheFLyIndividual
                         using (reader = cmd.ExecuteReader())
                         {
                             Console.Clear();
-                            Console.WriteLine(">>> Companhia Aérea Localizada <<<\n");
+                            Console.WriteLine("### Companhia Aérea Localizada em Bloqueados ###\n");
                             while (reader.Read())
                             {
                                 recebe = reader.GetString(0);
@@ -176,6 +177,36 @@ namespace OnTheFLyIndividual
                                 Console.WriteLine("Data Cadastro: {0}", reader.GetDateTime(3).ToShortDateString());
                                 Console.WriteLine("Data Ultimo Voo: {0}", reader.GetDateTime(4).ToShortDateString());
                                 Console.WriteLine("Situacao: {0}", reader.GetString(5));
+                                Console.WriteLine("\n");
+                            }
+                        }
+                        conexao.Close();
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    return recebe;
+                case 5: //LER A PASSAGEM
+                    recebe = "";
+                    try
+                    {
+                        SqlConnection conexao = new SqlConnection(Caminho());
+                        conexao.Open();
+                        SqlCommand cmd = new SqlCommand(sql, conexao);
+                        SqlDataReader reader = null;
+                        using (reader = cmd.ExecuteReader())
+                        {
+                            Console.Clear();
+                            Console.WriteLine("### Passagem Localizada ###\n");
+                            while (reader.Read())
+                            { 
+                                recebe = reader.GetString(0);
+                                Console.WriteLine("Id: {0}", reader.GetString(0));
+                                Console.WriteLine("IdVoo: {0}", reader.GetString(1));
+                                Console.WriteLine("Data Ultima Operação: {0}", reader.GetDateTime(2).ToShortDateString());
+                                Console.WriteLine("Valor: {0}", reader.GetDouble(3));
+                                Console.WriteLine("Situacao: {0}", reader.GetString(4));
                                 Console.WriteLine("\n");
                             }
                         }
