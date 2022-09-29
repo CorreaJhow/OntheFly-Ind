@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Proj_ON_THE_FLY;
 
 namespace OnTheFLyIndividual
 {
@@ -104,7 +105,6 @@ namespace OnTheFLyIndividual
                 Console.WriteLine("Comando executado no SQL\n");
                 Console.WriteLine(sql);
                 Console.ReadKey();
-
                 conexao.InserirDado(conexaosql, sql);
                 Console.WriteLine("Inscrição de Voo realizada com sucesso!");
             }

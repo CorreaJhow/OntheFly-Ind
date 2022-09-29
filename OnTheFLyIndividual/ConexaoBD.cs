@@ -68,7 +68,7 @@ namespace OnTheFLyIndividual
         {
             switch (op)
             {
-                case 1: //IMPRIMI PASSAGEIRO
+                case 1: //Localizar Passageiro
                     String recebe = "";
                     try
                     {
@@ -98,7 +98,7 @@ namespace OnTheFLyIndividual
                         Console.WriteLine(ex.Message);
                     }
                     return recebe;
-                case 2: //IMPRIMI VOO 
+                case 2: //Localizar Voo
                     recebe = "";
                     try
                     {
@@ -120,6 +120,66 @@ namespace OnTheFLyIndividual
                             }
                         }
                         conecta.Close();
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    return recebe;
+                case 3: //Localizar Bloqueadas
+                    recebe = "";
+                    try
+                    {
+                        SqlConnection conexao = new SqlConnection(Caminho());
+                        conexao.Open();
+
+                        SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                        SqlDataReader reader = null;
+
+                        using (reader = cmd.ExecuteReader())
+                        {
+                            Console.Clear();
+                            Console.WriteLine(">>> Companhia Aérea Localizada <<<\n");
+                            while (reader.Read())
+                            {
+                                recebe = reader.GetString(0);
+                                Console.Write(" {0}", reader.GetString(0));
+                                Console.WriteLine("\n");
+                            }
+                        }
+                        conexao.Close();
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    return recebe;
+                case 4: //localizar cia 
+                    recebe = "";
+                    try
+                    {
+                        SqlConnection conexao = new SqlConnection(Caminho());
+                        conexao.Open();
+                        SqlCommand cmd = new SqlCommand(sql, conexao);
+                        SqlDataReader reader = null;
+                        using (reader = cmd.ExecuteReader())
+                        {
+                            Console.Clear();
+                            Console.WriteLine(">>> Companhia Aérea Localizada <<<\n");
+                            while (reader.Read())
+                            { //"SELECT Cnpj,RazaoSocial,Data_Abertura,Data_Cadastro,Data_UltimoVoo,Situacao
+                                recebe = reader.GetString(0);
+                                Console.WriteLine("CNPJ: {0}", reader.GetString(0));
+                                Console.WriteLine("Razao Social: {0}", reader.GetString(1));
+                                Console.WriteLine("Data Abertura: {0}", reader.GetDateTime(2).ToShortDateString());
+                                Console.WriteLine("Data Cadastro: {0}", reader.GetDateTime(3).ToShortDateString());
+                                Console.WriteLine("Data Ultimo Voo: {0}", reader.GetDateTime(4).ToShortDateString());
+                                Console.WriteLine("Situacao: {0}", reader.GetString(5));
+                                Console.WriteLine("\n");
+                            }
+                        }
+                        conexao.Close();
                     }
                     catch (SqlException ex)
                     {

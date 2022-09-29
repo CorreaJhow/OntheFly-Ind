@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Proj_ON_THE_FLY;
 
 namespace OnTheFLyIndividual
 {
@@ -67,9 +68,17 @@ namespace OnTheFLyIndividual
                     verificar = conexao.VerificarExiste(sql);
                 }
                 this.DataUltimaOperacao = DateTime.Now;
-                //valorPassagem
-                //Situacao Passagem
-                //inserir no banco de dados.
+                Console.WriteLine("Informe o valor da Passagem: ");
+                this.Valor = float.Parse(Console.ReadLine());
+                while(this.Valor < 0 || this.Valor > 9999.99)
+                {
+                    Console.WriteLine("Valor inválido de passagem, informe outro valor: ");
+                    this.Valor = float.Parse(Console.ReadLine());
+                }
+                this.SituacaoPassagem = "L";
+                Console.WriteLine("situação da passagem: "+this.SituacaoPassagem);
+                //string query = "insert into PassagemVoo"
+                //inserir no banco de dado [criar string, inserir no metodo de conexao]
             }
             else
             {
@@ -80,8 +89,19 @@ namespace OnTheFLyIndividual
             }
         }
         //Atualizar/Editar Passagem
-        //LocalizarPassagem
-        //RegistroPorRegistro
-    }
+        public void AtualizarPassagem()
+        {
 
+        }
+        //LocalizarPassagem
+        public void LocalizarPassagem()
+        {
+
+        }
+        //RegistroPorRegistro
+        public void RegistroPorRegistro()
+        {
+
+        }
+    }
 }
