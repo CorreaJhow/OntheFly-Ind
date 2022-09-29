@@ -47,8 +47,9 @@ namespace OnTheFLyIndividual
             }
             return aux;
         }
-        public void CadastrarPassagem()
+        public void CadastrarPassagem(SqlConnection conectar) //variavel qtapassagens 
         {
+            //i = 0; i > qtapassagens
             Voo voo = new Voo();
             string sql = "Select Id from Voo;";
             int verificar = conexao.VerificarExiste(sql);
@@ -71,20 +72,32 @@ namespace OnTheFLyIndividual
                 this.DataUltimaOperacao = DateTime.Now;
                 Console.WriteLine("Informe o valor da Passagem: ");
                 this.Valor = float.Parse(Console.ReadLine());
-                while(this.Valor < 0 || this.Valor > 9999.99)
+                while(this.Valor < 999.99 || this.Valor > 9999.99)
                 {
                     Console.WriteLine("Valor inválido de passagem, informe outro valor: ");
                     this.Valor = float.Parse(Console.ReadLine());
                 }
-                this.SituacaoPassagem = "L";
-                Console.WriteLine("situação da passagem: "+this.SituacaoPassagem);
-                //string query = "insert into PassagemVoo"
+                Console.WriteLine("Informe a situação da passagem (P - Paga | R - Reservada): ");
+                this.SituacaoPassagem = Console.ReadLine().ToUpper();
+                while(!this.SituacaoPassagem.Equals("P") && !this.SituacaoPassagem.Equals("R"))
+                {
+                    Console.WriteLine("Valor informado inválido, informe novamente:");
+                    this.SituacaoPassagem = Console.ReadLine().ToUpper();
+                }
+                Console.WriteLine("Situação da passagem: "+this.SituacaoPassagem);
+                string query = $"insert into Passagem(Id, IdVoo, DataUltimaOperacao, Valor, Situacao) values " +
+                    $"('{this.IdPassagem}','{voo.Id}','{this.DataUltimaOperacao}','{this.Valor}','{this.SituacaoPassagem}');";
                 //inserir no banco de dado [criar string, inserir no metodo de conexao]
+                Console.WriteLine(query);
+                Console.ReadKey();
+                conexao.InserirDado(conectar,query);
+                //voo.AssentosOcupados = -1;
+
             }
             else
             {
                 Console.Clear();
-                Console.WriteLine("Desculpa, impossível cadastrar voo, pois nao temos nenhuma aeronave Ativa Cadastrada");
+                Console.WriteLine("Desculpa, impossível cadastrar passagem, pois nao temos nenhuma voo Cadastrado");
                 Console.WriteLine("Pressione uma tecla para prosseguir");
                 Console.ReadKey();
             }
@@ -189,18 +202,15 @@ namespace OnTheFLyIndividual
         {
             List<string> Passagem = new();
             conecta.Open();
-            string sql = "Select Id, InscricaoAeronave, DataVoo, DataCadastro, Destino, Situacao from Voo";
+            string sql = "Select Id, IdVoo, DataUltimaOperacao, Valor, Situacao from Passagem";
             SqlCommand cmd = new SqlCommand(sql, conecta);
             SqlDataReader reader = null;
             using (reader = cmd.ExecuteReader())
             {
-                Console.WriteLine("\n\t### Voo Localizado ###\n");
+                Console.WriteLine("\n\t### Passagem Localizada ###\n");
                 while (reader.Read())
                 {
-                    if (reader.GetString(5) == "A")
-                    {
                         Passagem.Add(reader.GetString(0));
-                    }
                 }
             }
             conecta.Close();
@@ -210,12 +220,12 @@ namespace OnTheFLyIndividual
                 do
                 {
                     Console.Clear();
-                    Console.WriteLine(">>> Voos <<<\nDigite para navegar:\n[1] Próximo Cadasatro\n[2] Cadastro Anterior" +
+                    Console.WriteLine(">>> Passagem <<<\nDigite para navegar:\n[1] Próximo Cadasatro\n[2] Cadastro Anterior" +
                         "\n[3] Último cadastro\n[4] Voltar ao Início\n[s] Sair\n");
                     Console.WriteLine($"Cadastro [{i + 1}] de [{Passagem.Count}]");
                     //Imprimi o primeiro da lista
-                    string query = "Select Id, InscricaoAeronave, DataVoo, DataCadastro, Destino, Situacao from Voo where Id = '" + Passagem[i] + "';";
-                    conexao.LocalizarDado(conecta, query, 2);
+                    string query = "Select Id, IdVoo, DataUltimaOperacao, Valor, Situacao from Passagem where Id = '" + Passagem[i] + "';";
+                    conexao.LocalizarDado(conecta, query, 5);
                     Console.Write("Opção: ");
                     op = Console.ReadLine();
                     if (op != "1" && op != "2" && op != "3" && op != "4" && op != "s")

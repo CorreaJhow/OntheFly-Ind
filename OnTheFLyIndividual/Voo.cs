@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace OnTheFLyIndividual
         public String Id { get; set; }
         public string Destino { get; set; }
         public Aeronave Aeronave { get; set; }
+        public int AssentosOcupados { get; set; }
         public DateTime DataVoo { get; set; }
         public DateTime DataCadastro { get; set; }
         public char Situacao { get; set; }
@@ -92,6 +94,7 @@ namespace OnTheFLyIndividual
                     DataVoo = DateTime.Parse(Console.ReadLine());
                 }
                 this.DataCadastro = DateTime.Now;
+                this.AssentosOcupados = 0;
                 Console.WriteLine("Data de cadastro definifida como: " + DataCadastro);
                 Console.WriteLine("Informe a situacao do Voo: \n[A] Ativo \n[C] Cancelado");
                 Situacao = char.Parse(Console.ReadLine().ToUpper());
@@ -100,8 +103,8 @@ namespace OnTheFLyIndividual
                     Console.WriteLine("O valor informado é inválido, por favor informe novamente!\n[A] Ativo \n[C] Cancelado");
                     Situacao = char.Parse(Console.ReadLine().ToUpper());
                 }
-                sql = "insert into Voo (Id, InscricaoAeronave, DataCadastro, Situacao, DataVoo, Destino) values ('" + this.Id + "', '" + aeronave.Inscricao + "', '" +
-                this.DataCadastro + "', '" + this.Situacao + "', '" + this.DataVoo + "', '" + this.Destino + "');";
+                sql = "insert into Voo (Id, InscricaoAeronave, DataCadastro, AssentosOcupados, Situacao, DataVoo, Destino) values ('" + this.Id + "', '" + aeronave.Inscricao + "', '" +
+                this.DataCadastro + "', '"+this.AssentosOcupados+"', '" + this.Situacao + "', '" + this.DataVoo + "', '" + this.Destino + "');";
                 Console.WriteLine("Comando executado no SQL\n"); //tirar dps 
                 Console.WriteLine(sql); //tirar dps 
                 Console.ReadKey();

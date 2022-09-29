@@ -140,7 +140,6 @@ namespace OnTheFLyIndividual
 
                         using (reader = cmd.ExecuteReader())
                         {
-                            Console.Clear();
                             Console.WriteLine("### Companhia Aérea Localizada em Bloqueados ###\n");
                             while (reader.Read())
                             {
@@ -166,7 +165,6 @@ namespace OnTheFLyIndividual
                         SqlDataReader reader = null;
                         using (reader = cmd.ExecuteReader())
                         {
-                            Console.Clear();
                             Console.WriteLine(">>> Companhia Aérea Localizada <<<\n");
                             while (reader.Read())
                             { //"SELECT Cnpj,RazaoSocial,Data_Abertura,Data_Cadastro,Data_UltimoVoo,Situacao
@@ -197,7 +195,6 @@ namespace OnTheFLyIndividual
                         SqlDataReader reader = null;
                         using (reader = cmd.ExecuteReader())
                         {
-                            Console.Clear();
                             Console.WriteLine("### Passagem Localizada ###\n");
                             while (reader.Read())
                             { 

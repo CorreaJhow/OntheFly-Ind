@@ -138,6 +138,7 @@ namespace OnTheFLyIndividual
                         break;
                     case 2:
                         //cadastrar
+                        passagem.CadastrarPassagem(conexaosql);
                         PressioneContinuar();
                         break;
                     case 3:

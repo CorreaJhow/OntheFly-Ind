@@ -171,8 +171,14 @@ namespace OnTheFly_BD
             do
             {
                 Console.Clear();
-                Console.WriteLine("Escolha a opção desejada:\n\n1- Cadastrar\n2- Localizar\n3- Editar\n4- Bloqueados\n0- Sair");
+                Console.WriteLine("Escolha a opção desejada:\n\n[1] Cadastrar\n[2] Localizar\n[3] Editar\n[4] Bloqueados\n[0] Voltar ao Menu");
                 op = int.Parse(Console.ReadLine());
+                while(op < 0 && op > 5)
+                {
+                    Console.WriteLine("Opção inválida escolhida, informe novamente: ");
+                    op = int.Parse(Console.ReadLine());
+
+                }
                 CompanhiaAerea cia = new CompanhiaAerea();
                 switch (op)
                 {
