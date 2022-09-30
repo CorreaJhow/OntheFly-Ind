@@ -47,9 +47,8 @@ namespace OnTheFLyIndividual
             }
             return aux;
         }
-        public void CadastrarPassagem(SqlConnection conectar) //variavel qtapassagens 
+        public void CadastrarPassagem(SqlConnection conectar, string idVoo) //variavel qtapassagens 
         {
-            //i = 0; i > qtapassagens
             Voo voo = new Voo();
             string sql = "Select Id from Voo;";
             int verificar = conexao.VerificarExiste(sql);
@@ -58,25 +57,38 @@ namespace OnTheFLyIndividual
                 int valorId = GeradorDeID();
                 this.IdPassagem = "PA" + valorId.ToString();
                 Console.WriteLine("Id da passagem definido como: " + IdPassagem);
-                Console.WriteLine("Informe o Voo (Ex = V1234): ");
-                voo.Id = Console.ReadLine();
-                sql = "select Id from Voo where Id = '" + voo.Id + "';";
-                verificar = conexao.VerificarExiste(sql);
-                while(verificar == 0)
-                {
-                    Console.WriteLine("Esse voo nao existe, informe outro: ");
-                    voo.Id = Console.ReadLine();
-                    sql = "select Id from Voo where Id = '" + voo.Id + "';";
-                    verificar = conexao.VerificarExiste(sql);
-                }
+                voo.Id = idVoo;
+                Console.WriteLine("Id de voo:"+voo.Id);
+                //sql = "select Id from Voo where Id = '" + voo.Id + "';";
+                //verificar = conexao.VerificarExiste(sql);
+                //while(verificar == 0)
+                //{
+                //    Console.WriteLine("Esse voo nao existe, informe outro: ");
+                //    voo.Id = Console.ReadLine();
+                //    sql = "select Id from Voo where Id = '" + voo.Id + "';";
+                //    verificar = conexao.VerificarExiste(sql);
+                //}
                 this.DataUltimaOperacao = DateTime.Now;
-                Console.WriteLine("Informe o valor da Passagem: ");
-                this.Valor = float.Parse(Console.ReadLine());
-                while(this.Valor < 999.99 || this.Valor > 9999.99)
+                if(voo.Destino == "BSB")
                 {
-                    Console.WriteLine("Valor inválido de passagem, informe outro valor: ");
-                    this.Valor = float.Parse(Console.ReadLine());
+                    this.Valor = 1500;
                 }
+                else if (voo.Destino == "CGH")
+                {
+                    this.Valor = 2500;
+                }
+                else if (voo.Destino == "GIG")
+                {
+                    this.Valor = 3000;
+                }
+                Console.WriteLine("valor da passagem: " + this.Valor);
+                //Console.WriteLine("Informe o valor da Passagem: ");
+                //this.Valor = float.Parse(Console.ReadLine());
+                //while(this.Valor < 999.99 || this.Valor > 9999.99)
+                //{
+                //    Console.WriteLine("Valor inválido de passagem, informe outro valor: ");
+                //    this.Valor = float.Parse(Console.ReadLine());
+                //}
                 Console.WriteLine("Informe a situação da passagem (P - Paga | R - Reservada): ");
                 this.SituacaoPassagem = Console.ReadLine().ToUpper();
                 while(!this.SituacaoPassagem.Equals("P") && !this.SituacaoPassagem.Equals("R"))
@@ -87,12 +99,7 @@ namespace OnTheFLyIndividual
                 Console.WriteLine("Situação da passagem: "+this.SituacaoPassagem);
                 string query = $"insert into Passagem(Id, IdVoo, DataUltimaOperacao, Valor, Situacao) values " +
                     $"('{this.IdPassagem}','{voo.Id}','{this.DataUltimaOperacao}','{this.Valor}','{this.SituacaoPassagem}');";
-                //inserir no banco de dado [criar string, inserir no metodo de conexao]
-                Console.WriteLine(query);
-                Console.ReadKey();
                 conexao.InserirDado(conectar,query);
-                //voo.AssentosOcupados = -1;
-
             }
             else
             {

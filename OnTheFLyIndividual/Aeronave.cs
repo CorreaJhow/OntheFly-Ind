@@ -10,7 +10,7 @@ namespace Proj_ON_THE_FLY
     internal class Aeronave
     { 
         public String Inscricao { get; set; }
-        public String Capacidade { get; set; }
+        public int Capacidade { get; set; }
         public DateTime UltimaVenda = DateTime.Now;
         public DateTime DataCadastro = DateTime.Now;
         public char Situacao { get; set; }
@@ -18,7 +18,7 @@ namespace Proj_ON_THE_FLY
         public string CNPJ { get; set; }
         public CompanhiaAerea cia { get; set; }
         public Aeronave() { }
-        public Aeronave(String Inscrição, char Situacao, String Capacidade)
+        public Aeronave(String Inscrição, char Situacao, int Capacidade)
         {
             this.Inscricao = Inscrição;
             this.Capacidade = Capacidade;
@@ -72,7 +72,7 @@ namespace Proj_ON_THE_FLY
                     Thread.Sleep(2000);
                     Console.Clear();
                 }
-                Capacidade = cap.ToString();
+                Capacidade = cap;
             } while (cap < 100 || cap > 999);
             do
             {
@@ -271,7 +271,7 @@ namespace Proj_ON_THE_FLY
                             break;
                         case 4:
                             Console.Write("\nAlterar a Capacidade: ");
-                            this.Capacidade = Console.ReadLine();
+                            this.Capacidade = int.Parse(Console.ReadLine());
                             sql = $"Update Aeronave Set Capacidade=('{this.Capacidade}') Where InscricaoANAC=('{this.Inscricao}');";
                             Console.WriteLine("\nCapacidade Editado Com Sucesso... ");
                             Thread.Sleep(2000);

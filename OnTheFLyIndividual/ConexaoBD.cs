@@ -80,10 +80,10 @@ namespace OnTheFLyIndividual
                         {
                             Console.WriteLine("\n\t### Passageiro Localizado ###\n");
                             while (reader.Read())
-                            { 
+                            {
                                 recebe = reader.GetString(0);
-                                Console.WriteLine("Cpf: {0}", reader.GetString(0));  
-                                Console.WriteLine("Nome: {0}", reader.GetString(1)); 
+                                Console.WriteLine("Cpf: {0}", reader.GetString(0));
+                                Console.WriteLine("Nome: {0}", reader.GetString(1));
                                 Console.WriteLine("Data Nascimento: {0}", reader.GetDateTime(2).ToShortDateString());
                                 Console.WriteLine("Data Cadastro: {0}", reader.GetDateTime(3).ToShortDateString());
                                 Console.WriteLine("Sexo: {0}", reader.GetString(4));
@@ -197,13 +197,38 @@ namespace OnTheFLyIndividual
                         {
                             Console.WriteLine("### Passagem Localizada ###\n");
                             while (reader.Read())
-                            { 
+                            {
                                 recebe = reader.GetString(0);
                                 Console.WriteLine("Id: {0}", reader.GetString(0));
                                 Console.WriteLine("IdVoo: {0}", reader.GetString(1));
                                 Console.WriteLine("Data Ultima Operação: {0}", reader.GetDateTime(2).ToShortDateString());
                                 Console.WriteLine("Valor: {0}", reader.GetDouble(3));
                                 Console.WriteLine("Situacao: {0}", reader.GetString(4));
+                                Console.WriteLine("\n");
+                            }
+                        }
+                        conexao.Close();
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    return recebe;
+                case 6: //localizar restritos 
+                    recebe = "";
+                    try
+                    {
+                        SqlConnection conexao = new SqlConnection(Caminho());
+                        conexao.Open();
+                        SqlCommand cmd = new SqlCommand(sql, conexao);
+                        SqlDataReader reader = null;
+                        using (reader = cmd.ExecuteReader())
+                        {
+                            Console.Clear();
+                            while (reader.Read())
+                            {
+                                recebe = reader.GetString(0);
+                                Console.Write(" {0}", reader.GetString(0));
                                 Console.WriteLine("\n");
                             }
                         }

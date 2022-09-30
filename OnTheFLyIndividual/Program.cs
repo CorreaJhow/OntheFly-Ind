@@ -12,7 +12,7 @@ namespace OnTheFLyIndividual
         static PassagemVoo passagem = new PassagemVoo();
         static Aeronave aeronave = new Aeronave();
         static CompanhiaAerea cia = new CompanhiaAerea();
-        static PassagemVoo passagemvoo = new PassagemVoo();
+        static Passageiro passageiro = new Passageiro();
         static void Main(string[] args)
         {
             Menu();
@@ -39,7 +39,7 @@ namespace OnTheFLyIndividual
                     Passagem();
                     break;
                 case 2:
-                    //Cliente();
+                    Cliente();
                     break;
                 case 3:
                     cia.MenuCiaAerea(conexaosql);
@@ -125,7 +125,7 @@ namespace OnTheFLyIndividual
                 while (op < 0 || op > 5)
                 {
                     Console.WriteLine("Opção inválida, informe novamente: ");
-                    Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Cadastrar\n[3] Localizar\n[4] Editar\n[5] Imprimir por registro\n[0] Sair");
+                    Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Localizar\n[3] Editar\n[4] Imprimir por registro\n[0] Sair");
                     op = int.Parse(Console.ReadLine());
                 }
                 switch (op)
@@ -137,23 +137,15 @@ namespace OnTheFLyIndividual
                         Menu();
                         break;
                     case 2:
-                        //cadastrar
-                        passagem.CadastrarPassagem(conexaosql);
+                        passagem.LocalizarPassagem(conexaosql);
                         PressioneContinuar();
                         break;
                     case 3:
-                        passagemvoo.LocalizarPassagem(conexaosql);
-                        //localizar
+                        passagem.AtualizarPassagem(conexaosql);
                         PressioneContinuar();
                         break;
                     case 4:
-                        passagemvoo.AtualizarPassagem(conexaosql);
-                        //editar
-                        PressioneContinuar();
-                        break;
-                    case 5:
-                        passagemvoo.RegistroPorRegistro(conexaosql);
-                        //imprimir por registro 
+                        passagem.RegistroPorRegistro(conexaosql);
                         PressioneContinuar();
                         break;
                     default:
@@ -200,6 +192,52 @@ namespace OnTheFLyIndividual
                         break;
                     case 5:
                         aeronave.DeletarAeronave(conexaosql);
+                        PressioneContinuar();
+                        break;
+                    default:
+                        break;
+                }
+            } while (true);
+        }
+        public static void Cliente()
+        {
+            do
+            {
+                ConexaoBD cnx = new ConexaoBD();
+                SqlConnection conexaosql = new SqlConnection(cnx.Caminho());
+                Console.Clear();
+                CabecalhoOntheFly();
+                Console.WriteLine("### Menu de Passageiro ###");
+                Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Cadastrar\n[3] Localizar\n[4] Editar\n[5] Deletar \n[0] Sair");
+                int op = int.Parse(Console.ReadLine());
+                while (op < 0 || op > 5)
+                {
+                    Console.WriteLine("Opção inválida, informe novamente: ");
+                    Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Cadastrar\n[3] Localizar\n[4] Editar\n[5] Deletar \n[0] Sair");
+                    op = int.Parse(Console.ReadLine());
+                }
+                switch (op)
+                {
+                    case 0:
+                        Environment.Exit(0);
+                        break;
+                    case 1:
+                        Menu();
+                        break;
+                    case 2:
+                        passageiro.CadastrarPassageiro(conexaosql);
+                        PressioneContinuar();
+                        break;
+                    case 3:
+                        passageiro.LocalizarPassageiro(conexaosql);
+                        PressioneContinuar();
+                        break;
+                    case 4:
+                        passageiro.EditarPassageiro(conexaosql);
+                        PressioneContinuar();
+                        break;
+                    case 5:
+                        passageiro.DeletarPassageiro(conexaosql);
                         PressioneContinuar();
                         break;
                     default:
