@@ -18,9 +18,7 @@ namespace OnTheFLyIndividual
         public char Situacao { get; set; }
 
         public ConexaoBD banco;
-
         public Passageiro() { }
-
         public Passageiro(string nome, string cpf, DateTime dataNascimento, char sexo, DateTime ultimaCompra, DateTime dataCadastro, char situacao)
         {
             this.Nome = nome;
@@ -31,19 +29,17 @@ namespace OnTheFLyIndividual
             this.DataCadastro = dataCadastro;
             this.Situacao = situacao;
         }
-        public void CadastrarPassageiro(SqlConnection conecta) // não pode cadastrar o mesmo cpf 2x 
+        public void CadastrarPassageiro(SqlConnection conecta)  
         {
             Console.WriteLine("\n*** CADASTRO DE PASSAGEIRO ***");
             Console.Write("\nNome: ");
             this.Nome = Console.ReadLine();
-            //validação de tamanho
             while (this.Nome.Length > 50)
             {
                 Console.WriteLine("\nDigite um Nome de até 50 digitos!");
                 Console.Write("Nome: ");
                 this.Nome = Console.ReadLine();
             }
-            //validação do tamanho e condição de cpf valido
             Console.Write("\nCPF: ");
             this.Cpf = Console.ReadLine();
             while (ValidarCpf(this.Cpf) == false || this.Cpf.Length < 11)
@@ -54,7 +50,6 @@ namespace OnTheFLyIndividual
             }
             Console.Write("\nData de Nascimento: ");
             this.DataNascimento = DateTime.Parse(Console.ReadLine());
-
             Console.Write("\nSexo (M/F/N): ");
             this.Sexo = char.Parse(Console.ReadLine().ToUpper());
             while ((this.Sexo.CompareTo('M') != 0) && (this.Sexo.CompareTo('F') != 0) && (this.Sexo.CompareTo('N') != 0))
@@ -80,7 +75,7 @@ namespace OnTheFLyIndividual
 
             if (opc == 1)
             {
-                string sql = $"Insert into PASSAGEIRO (CPF, NOME, DATA_NASCIMENTO, DATA_CADASTRO,SEXO,SITUACAO,ULTIMA_COMPRA) Values ('{this.Cpf}' , " +
+                string sql = $"Insert into PASSAGEIRO (Cpf, Nome, DataNascimento, DataCadastro,Sexo,Situacao,UltimaCompra) Values ('{this.Cpf}' , " +
                      $"'{this.Nome}', '{this.DataNascimento}', '{this.DataCadastro}', '{this.Sexo}', '{this.Situacao}', '{this.UltimaCompra}');";
                 banco = new ConexaoBD();
                 banco.InserirDado(conecta, sql);
@@ -110,7 +105,7 @@ namespace OnTheFLyIndividual
 
             if (opc == 1)
             {
-                string sql = $"Delete From PASSAGEIRO Where CPF=('{this.Cpf}');";
+                string sql = $"Delete From Passageiro Where Cpf=('{this.Cpf}');";
                 banco = new ConexaoBD();
                 banco.InserirDado(conecta, sql);
                 Console.WriteLine("Cadastro de Passageiro Deletado com sucesso!");
@@ -140,10 +135,9 @@ namespace OnTheFLyIndividual
             if (opc == 1)
             {
                 Console.Clear();
-                String sql = $"Select CPF,NOME,DATA_NASCIMENTO,DATA_CADASTRO,SEXO,SITUACAO,ULTIMA_COMPRA From PASSAGEIRO Where CPF=('{this.Cpf}');";
+                String sql = $"Select Cpf,Nome,DataNascimento,DataCadastro,Sexo,Situacao,UltimaCompra From Passageiro Where Cpf=('{this.Cpf}');";
                 banco = new ConexaoBD();
                 banco.LocalizarDado(conecta, sql,1);
-
                 Console.WriteLine("\n\tAperte Qualquer Botão para Encerrar...");
                 Console.ReadKey();
             }
@@ -162,7 +156,7 @@ namespace OnTheFLyIndividual
             if (opc == 1)
             {
                 Console.Clear();
-                String sql = $"Select CPF,NOME,DATA_NASCIMENTO,DATA_CADASTRO,SEXO,SITUACAO,ULTIMA_COMPRA From PASSAGEIRO";
+                String sql = $"Select Cpf,Nome,DataNascimento,DataCadastro,Sexo,Situacao,UltimaCompra From Passageiro";
                 banco = new ConexaoBD();
                 banco.LocalizarDado(conecta, sql,1);
 
@@ -189,7 +183,7 @@ namespace OnTheFLyIndividual
                 Console.Write("CPF: ");
                 this.Cpf = Console.ReadLine();
             }
-            sql = $"Select CPF,NOME,DATA_NASCIMENTO,DATA_CADASTRO,SEXO,SITUACAO,ULTIMA_COMPRA From PASSAGEIRO Where CPF=('{this.Cpf}');";
+            sql = $"Select Cpf,Nome,DataNascimento,DataCadastro,Sexo,Situacao,UltimaCompra From Passageiro Where CPF=('{this.Cpf}');";
             banco = new ConexaoBD();
             banco.LocalizarDado(conecta,sql,1);
             Console.Clear();

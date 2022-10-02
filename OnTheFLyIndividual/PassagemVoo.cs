@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -58,17 +59,12 @@ namespace OnTheFLyIndividual
                 this.IdPassagem = "PA" + valorId.ToString();
                 Console.WriteLine("Id da passagem definido como: " + IdPassagem);
                 voo.Id = idVoo;
-                Console.WriteLine("Id de voo:"+voo.Id);
-                //sql = "select Id from Voo where Id = '" + voo.Id + "';";
-                //verificar = conexao.VerificarExiste(sql);
-                //while(verificar == 0)
-                //{
-                //    Console.WriteLine("Esse voo nao existe, informe outro: ");
-                //    voo.Id = Console.ReadLine();
-                //    sql = "select Id from Voo where Id = '" + voo.Id + "';";
-                //    verificar = conexao.VerificarExiste(sql);
-                //}
+                Console.WriteLine("Id de voo: "+voo.Id);
                 this.DataUltimaOperacao = DateTime.Now;
+                string parametro = "Destino";
+                sql = $"select Destino from Voo where Id = '{idVoo}';";
+                string destino = ConexaoBD.RetornoDados(sql, conectar, parametro);
+                voo.Destino = destino;
                 if(voo.Destino == "BSB")
                 {
                     this.Valor = 1500;
@@ -82,13 +78,6 @@ namespace OnTheFLyIndividual
                     this.Valor = 3000;
                 }
                 Console.WriteLine("valor da passagem: " + this.Valor);
-                //Console.WriteLine("Informe o valor da Passagem: ");
-                //this.Valor = float.Parse(Console.ReadLine());
-                //while(this.Valor < 999.99 || this.Valor > 9999.99)
-                //{
-                //    Console.WriteLine("Valor inválido de passagem, informe outro valor: ");
-                //    this.Valor = float.Parse(Console.ReadLine());
-                //}
                 Console.WriteLine("Informe a situação da passagem (P - Paga | R - Reservada): ");
                 this.SituacaoPassagem = Console.ReadLine().ToUpper();
                 while(!this.SituacaoPassagem.Equals("P") && !this.SituacaoPassagem.Equals("R"))
@@ -109,7 +98,6 @@ namespace OnTheFLyIndividual
                 Console.ReadKey();
             }
         }
-        //Atualizar/Editar Passagem
         public void AtualizarPassagem(SqlConnection conexaosql)
         {
             int opc = 0;
@@ -184,7 +172,6 @@ namespace OnTheFLyIndividual
                 }
             }
         }
-        //LocalizarPassagem
         public void LocalizarPassagem(SqlConnection conexaosql)
         {
             Console.Clear();
@@ -204,7 +191,6 @@ namespace OnTheFLyIndividual
                 conexao.LocalizarDado(conexaosql, sql,5);
             }
         }
-        //RegistroPorRegistro
         public void RegistroPorRegistro(SqlConnection conecta)
         {
             List<string> Passagem = new();

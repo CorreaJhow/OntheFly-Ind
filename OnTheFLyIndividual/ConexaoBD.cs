@@ -268,5 +268,26 @@ namespace OnTheFLyIndividual
             conn.Close();
             return 0;
         }
+        public static string RetornoDados(string sql, SqlConnection conexao, string parametro)
+        {
+            var situacao = "";
+            ConexaoBD caminho = new();
+            conexao = new(caminho.Caminho());
+            conexao.Open();
+            SqlCommand cmd = new(sql, conexao);
+            cmd.CommandType = CommandType.Text;
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        situacao = reader[$"{parametro}"].ToString();
+                    }
+                }
+            }
+            conexao.Close();
+            return situacao;
+        }
     }
 }

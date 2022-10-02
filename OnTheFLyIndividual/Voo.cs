@@ -287,5 +287,10 @@ namespace OnTheFLyIndividual
                     i--;
             }
         }
+        public Voo TrazerVoo(string idVoo) //pegar voo selecionado e retornar.
+        {
+            Voo voo = new Voo();
+            return voo;
+        }
     }
 }

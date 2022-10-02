@@ -12,7 +12,7 @@ namespace OnTheFly_BD
     {
         public int Id_Venda { get; set; }
         public DateTime Data_venda { get; set; }
-        public float Valor_Total { get; set; }
+        public double Valor_Total { get; set; }
         public String Id_Passagem { get; set; }
         public string Cpf { get; set; }
         public ConexaoBD banco = new ConexaoBD();
@@ -33,8 +33,10 @@ namespace OnTheFly_BD
         //}
         public void CadastrarVenda(SqlConnection conexaosql)
         {
+            int assentosOcupados, capacidade;
+            double valorPassagem;
+            string sql = $"select cpf from Passageiro", parametro, Inscricao, idPassagem;
             Console.WriteLine("### Menu Vendas ###");
-            string sql = $"select cpf from Passageiros";
             int verificarCpf = banco.VerificarExiste(sql);
             if (verificarCpf != 0)
             {
@@ -46,126 +48,125 @@ namespace OnTheFly_BD
                     Console.Write("CPF: ");
                     this.Cpf = Console.ReadLine();
                 }
-                sql = $"SELECT Cpf FROM Cpf_Restrito where Cpf = '{this.Cpf}';";
-                int retorno = banco.VerificarExiste(sql);
-                if (retorno != 0)
+                // sql = $"SELECT Cpf FROM Cpf_Restrito where Cpf = '{this.Cpf}';";
+                //int retorno = banco.VerificarExiste(sql);
+                //if (retorno != 0)
+                //{
+                Console.Clear();
+                Console.WriteLine("Gostaria de iniciar uma venda de passagens?\n\n[1] Sim\n[2] Não");
+                int op = int.Parse(Console.ReadLine());
+                while (op != 1 && op != 2)
                 {
-                    Console.Clear();
-                    Console.WriteLine("Gostaria de iniciar uma venda de passagens?\n\n[1] Sim\n[2] Não");
-                    int op = int.Parse(Console.ReadLine());
-                    while (op != 1 && op != 2)
-                    {
-                        Console.WriteLine("Valor inválido informado, informe novamente: ");
-                        op = int.Parse(Console.ReadLine());
-                    }
-                    switch (op)
-                    {
-                        //adicionar Passagem na tabela de venda no banco
-                        //Ver a união de tabela. 
-                        //testar a classe venda 
-                        //fazer a classe itemvenda(dependendo da analise)
-                        //conversar com o pestana
-                        case 1:
-                            this.Id_Venda = RandomCadastroVenda();
-                            Console.WriteLine("Id da Venda: " + this.Id_Venda);
-                            this.Data_venda = DateTime.Now;
-                            Console.WriteLine("Quantas passagens voce gostaria de adquirir? (Maximo 4 por CPF)");//perguntar quantas passagem!! 
-                            int contaPassagem = int.Parse(Console.ReadLine());
-                            while (contaPassagem < 1 || contaPassagem > 4)
-                            {
-                                Console.WriteLine("Numero inválido de passagens, insira outro valor: ");
-                                contaPassagem = int.Parse(Console.ReadLine());
-                            }
-                            sql = $"select Id, Situacao from Voo where Situacao = 'A'";
-                            int verificarVoo = banco.VerificarExiste(sql);
+                    Console.WriteLine("Valor inválido informado, informe novamente: ");
+                    op = int.Parse(Console.ReadLine());
+                }
+                switch (op)
+                {
+                    //adicionar Passagem na tabela de venda no banco
+                    //Ver a união de tabela. 
+                    //testar a classe venda 
+                    //fazer a classe itemvenda(dependendo da analise)
+                    //conversar com o pestana
+                    case 1:                      
+                        this.Data_venda = DateTime.Now;
+                        Console.WriteLine("Data da venda: " + this.Data_venda);
+                        Console.WriteLine("Quantas passagens voce gostaria de adquirir? (Maximo 4 por Venda)");//perguntar quantas passagem!! 
+                        int contaPassagem = int.Parse(Console.ReadLine());
+                        while (contaPassagem < 1 || contaPassagem > 4)
+                        {
+                            Console.WriteLine("Numero inválido de passagens, insira outro valor: ");
+                            contaPassagem = int.Parse(Console.ReadLine());
+                        }
+                        sql = $"select Id, Situacao from Voo where Situacao = 'A'";
+                        int verificarVoo = banco.VerificarExiste(sql);
+                        if (verificarVoo != 0)
+                        {
+                            Console.WriteLine("Informe o Id do Voo desejado (Ex = 'V1234', Caso nao saiba o id do Voo, vá ao menu 'Voo' e consulte o ID!): ");
+                            string idVoo = Console.ReadLine();
+                            sql = $"select Id from Voo where Id = '{idVoo}';";
+                            verificarVoo = banco.VerificarExiste(sql);
                             if (verificarVoo != 0)
                             {
-                                Console.WriteLine("Informe o Id do Voo desejado (Ex = V1234): ");
-                                string idVoo = Console.ReadLine();
-                                Console.WriteLine("\n\n\n Caso nao saiba o id do Voo, vá ao menu e consulte o ID!");
-                                sql = $"select Id from Voo where Id = '{idVoo}';";
-                                verificarVoo = banco.VerificarExiste(sql);
-                                if (verificarVoo != 0)
+                                #region Coletando Dados da DB
+                                sql = $"select AssentosOcupados from Voo where Id = '{idVoo}';";
+                                parametro = "AssentosOcupados";
+                                assentosOcupados = Convert.ToInt32(ConexaoBD.RetornoDados(sql, conexaosql, parametro));
+
+                                sql = $"select InscricaoAeronave from Voo where Id = '{idVoo}';";
+                                parametro = "InscricaoAeronave";
+                                Inscricao = ConexaoBD.RetornoDados(sql, conexaosql, parametro);
+
+                                sql = $"select Capacidade from Aeronave where InscricaoANAC = '{Inscricao}';";
+                                parametro = "Capacidade";
+                                capacidade = Convert.ToInt32(ConexaoBD.RetornoDados(sql, conexaosql, parametro));
+
+                                #endregion            
+                                if ((assentosOcupados + contaPassagem) < (capacidade))
                                 {
-                                    if ((voo.AssentosOcupados + contaPassagem) < (voo.Aeronave.Capacidade))
+                                    for (int i = 0; i < contaPassagem; i++)
                                     {
-                                        for (int i = 0; i < contaPassagem; i++)
-                                        {
-                                            Console.WriteLine($"### Cadastro de passagem [{i}]###");
-                                            passagem.CadastrarPassagem(conexaosql, idVoo);
-                                            voo.AssentosOcupados = +1;
-                                            voo.Aeronave.Capacidade = -1;
-                                            this.Valor_Total = passagem.Valor * contaPassagem;
-                                            string sqll = $"INSERT INTO Venda(Id, DataVenda, ValorTotal,IdPassagem, Cpf) VALUES ('{this.Id_Venda}', " +
-                                            $"'{this.Data_venda}','{this.Valor_Total}','{passagem.IdPassagem}','{this.Cpf}';";
-                                            banco = new ConexaoBD();
-                                            banco.InserirDado(conexaosql, sqll); //aqui é um registro, informando a venda total
-                                            Console.WriteLine("\n>>> Dados da Venda <<<\n\nID");
-                                            Console.ReadKey();
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("Assentos insulficientes, volte ao menu e informe uma quantidade menor!");
-                                        Program.PressioneContinuar();
-                                        MenuVenda();
+                                        this.Id_Venda = RandomCadastroVenda();
+                                        Console.WriteLine($"### Cadastro de passagem [{i + 1}]###");
+                                        passagem = new PassagemVoo();
+                                        banco = new ConexaoBD();
+                                        passagem.CadastrarPassagem(conexaosql, idVoo);
+                                        assentosOcupados = +1;
+                                        sql = $"select Valor from Passagem where IdVoo = '{idVoo}';";
+                                        parametro = "Valor";
+                                        valorPassagem = Convert.ToDouble(ConexaoBD.RetornoDados(sql, conexaosql, parametro));
+                                        this.Valor_Total = valorPassagem * contaPassagem;
+                                        sql = $"select Id from Passagem where IdVoo = '{idVoo}';";
+                                        parametro = "Id";
+                                        idPassagem = ConexaoBD.RetornoDados(sql, conexaosql, parametro);
+                                        string sqll = $"insert into PassagemVenda(Id, DataVenda, ValorTotal, IDItemVenda, Passageiro,ValorUnitario, Voo) values ('{this.Id_Venda}', " +
+                                        $"'{this.Data_venda}','{this.Valor_Total}','{idPassagem}','{this.Cpf}','{valorPassagem}','{idVoo}');";
+                                        banco.InserirDado(conexaosql, sqll);
+                                        sqll = $"insert VendaPassageiro(DataVenda, ValorTotal, Cpf) values ('{DateTime.Now}','{this.Valor_Total}','{this.Cpf}');";
+                                        banco.InserirDado(conexaosql, sqll);
+                                        //AssentosOcupados
+                                        string update = $"Update Voo set AssentosOcupados = {assentosOcupados + 1} where Id = '{idVoo}'";
+                                        banco.EditarDado(conexaosql, update);
+                                        //Capacidade do Voo
+                                        update = $"Update Aeronave set Capacidade = {capacidade - 1} where InscricaoANAC = '{Inscricao}'";
+                                        banco.EditarDado(conexaosql, update);
+                                        Console.WriteLine("\n### Cadastro de Venda com Sucesso ###\nPressione uma tecla para prosseguir!");
+                                        Console.ReadKey();
                                     }
                                 }
                                 else
                                 {
-                                    Console.WriteLine("O voo nao foi encontrado, tente novamente depois!");
+                                    Console.WriteLine("Assentos insulficientes, volte ao menu e informe uma quantidade menor!");
                                     Program.PressioneContinuar();
-                                    MenuVenda();
+                                    MenuVenda(conexaosql);
                                 }
-                                //while (verificarVoo == 0)
-                                //{
-                                //    Console.WriteLine("Nao existe voo cadastrado com esse destino, voce deseja escolher outro?" +
-                                //        "\n[1] Sim \n[2] Nao ");
-                                //    int opc = int.Parse(Console.ReadLine());
-                                //    while(opc != 1 && opc != 2)
-                                //    {
-                                //        Console.WriteLine("Opção inválida, informe novamente: ");
-                                //        opc = int.Parse(Console.ReadLine());
-                                //    }
-                                //    if(opc == 1)
-                                //    {
-                                //        Console.WriteLine("Informe o destino desejado: ");
-                                //        destino = DestinoVoo();
-                                //        sql = $"select Id, Destino from Voo where Destino = '{destino}';";
-                                //        verificarVoo = banco.VerificarExiste(sql);
-                                //    } else 
-                                //    {
-                                //        MenuVenda();
-                                //    }
-                                //}
-
-                                //INSIRA A PORRA DO ID VOO
-
-
-                                break;
                             }
                             else
                             {
-                                Console.WriteLine("Nao existem Voos Cadastrados, impossível realizar venda!!");
+                                Console.WriteLine("O voo nao foi encontrado, tente novamente depois!");
                                 Program.PressioneContinuar();
-                                MenuVenda();
+                                MenuVenda(conexaosql);
                             }
                             break;
-                        case 2:
-                            MenuVenda();
-                            break;
-                        default:
-                            break;
-
-
-
-                    }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Nao existem Voos Cadastrados, impossível realizar venda!!");
+                            Program.PressioneContinuar();
+                            MenuVenda(conexaosql);
+                        }
+                        break;
+                    case 2:
+                        MenuVenda(conexaosql);
+                        break;
+                    default:
+                        break;
                 }
-                else
-                {
-                    Console.WriteLine("Venda não pode ser finalizada, o cpf esta restrito!! \nAperte enter para sair.");
-                    Console.ReadKey();
-                }
+                //}
+                //else
+                //{
+                //    Console.WriteLine("Venda não pode ser finalizada, o cpf esta restrito!! \nAperte enter para sair.");
+                //    Console.ReadKey();
+                //}
             }
             else
             {
@@ -177,7 +178,7 @@ namespace OnTheFly_BD
         private static int RandomCadastroVenda()
         {
             Random rand = new Random();
-            int[] numero = new int[99999];
+            int[] numero = new int[100];
             int aux = 0;
             for (int k = 0; k < numero.Length; k++)
             {
@@ -191,7 +192,7 @@ namespace OnTheFly_BD
             }
             return aux;
         }
-        public void MenuVenda()
+        public void MenuVenda(SqlConnection conexaosql)
         {
             int op;
             do
@@ -200,7 +201,6 @@ namespace OnTheFly_BD
                 Console.WriteLine("Escolha a opção desejada:\n\n[1] Cadastrar\n[2] Localizar\n[3] Editar\n[4] voltar ao menu \n[0] Sair");
                 op = int.Parse(Console.ReadLine());
                 CompanhiaAerea cia = new CompanhiaAerea();
-                SqlConnection conexaosql = new SqlConnection();
                 switch (op)
                 {
                     case 0:
