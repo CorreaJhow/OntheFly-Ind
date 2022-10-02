@@ -32,14 +32,13 @@ namespace OnTheFly_BD
             CompanhiaAerea cia = new CompanhiaAerea();
             this.UltimoVoo = DateTime.Now;
             this.DataCadastro = DateTime.Now;
-
             Console.Clear();
             Console.WriteLine(">>> Cadastro de Companhia Aérea <<<\n\n");
             Console.Write("Digite o CNPJ da Companhia Aérea: ");
             this.Cnpj = Console.ReadLine();
             if (ValidarCnpj(this.Cnpj))
             {
-                Console.Write("Digite a data de abertura da Companhia: ");//try catch para data
+                Console.Write("Digite a data de abertura da Companhia: ");
                 this.DataAbertura = DateTime.Parse(Console.ReadLine());
                 System.TimeSpan tempoAbertura = DateTime.Now.Subtract(this.DataAbertura);
                 if (tempoAbertura.TotalDays > 190)
@@ -90,7 +89,7 @@ namespace OnTheFly_BD
             Console.WriteLine("Aperte enter para contninuar.");
             Console.ReadKey();
             cia.MenuCiaAerea(conexaosql);
-        } //melhorar impressão da cia 
+        } 
         public void EditarCia(SqlConnection conexaosql)
         {
             int opc = 0;

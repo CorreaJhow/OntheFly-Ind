@@ -239,6 +239,37 @@ namespace OnTheFLyIndividual
                         Console.WriteLine(ex.Message);
                     }
                     return recebe;
+                case 7:
+                    recebe = "";
+                    try
+                    {
+                        SqlConnection conexao = new SqlConnection(Caminho());
+                        conexao.Open();
+                        SqlCommand cmd = new SqlCommand(sql, conexao);
+                        SqlDataReader reader = null;
+                        using (reader = cmd.ExecuteReader())
+                        {
+                            Console.WriteLine("### Venda Localizada ###\n");
+                            while (reader.Read())
+                            { //Id, DataVenda, Passageiro, ValorTotal, Voo, IDItemVenda, ValorUnitario
+                                recebe = Convert.ToString(reader.GetInt32(0));
+                                Console.WriteLine("Id: {0}", reader.GetInt32(0));
+                                Console.WriteLine("Data Venda: {0}", reader.GetDateTime(1).ToShortDateString());
+                                Console.WriteLine("Passageiro: {0}", reader.GetString(2));
+                                Console.WriteLine("Valor Total: {0}", reader.GetDouble(3));
+                                Console.WriteLine("Voo: {0}", reader.GetString(4)); 
+                                Console.WriteLine("Item Venda: {0}", reader.GetString(5));
+                                Console.WriteLine("Valor Unitario: {0}", reader.GetDouble(6));
+                                Console.WriteLine("\n");
+                            }
+                        }
+                        conexao.Close();
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    return recebe;
                 default:
                     return null;
             }

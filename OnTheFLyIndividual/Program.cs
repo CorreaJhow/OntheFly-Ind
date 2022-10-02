@@ -24,7 +24,7 @@ namespace OnTheFLyIndividual
             SqlConnection conexaosql = new SqlConnection(cnx.Caminho());
             Console.Clear();
             CabecalhoOntheFly();
-            Console.WriteLine("Escolha a opção desejada:\n\n[1] Passagem\n[2] Passageiro\n[3] Cia.Aérea\n[4] Vôos\n[5] Aeronave\n[6] Venda \n[0] Sair");
+            Console.WriteLine("Escolha a opção desejada:\n\n[1] Passagem\n[2] Passageiro\n[3] Cia.Aérea\n[4] Vôos\n[5] Aeronave\n[6] Venda \n[0] Sair do Programa");
             int op = int.Parse(Console.ReadLine());
             while (op < 0 || op > 6)
             {
@@ -124,12 +124,12 @@ namespace OnTheFLyIndividual
                 Console.Clear();
                 CabecalhoOntheFly();
                 Console.WriteLine("### Menu de Passagem ###");
-                Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Localizar\n[3] Editar\n[4] Imprimir por registro\n[0] Sair");
+                Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Localizar\n[3] Editar\n[4] Imprimir por registro\n[0] Sair do Programa");
                 int op = int.Parse(Console.ReadLine());
                 while (op < 0 || op > 5)
                 {
                     Console.WriteLine("Opção inválida, informe novamente: ");
-                    Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Localizar\n[3] Editar\n[4] Imprimir por registro\n[0] Sair");
+                    Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu anterior\n[2] Localizar\n[3] Editar\n[4] Imprimir por registro\n[0] Sair do Programa");
                     op = int.Parse(Console.ReadLine());
                 }
                 switch (op)

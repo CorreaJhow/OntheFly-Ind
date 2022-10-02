@@ -47,14 +47,14 @@ namespace Proj_ON_THE_FLY
         public void CadastroAeronaves(SqlConnection conecta)
         {
             Console.WriteLine("\n*** Cadastro de Aeronave ***");
-            Console.WriteLine("Informe o CNPJ da Companhia Aerea: ");//pedir o cnpj procurar na tbela companhia e se tiver agrupar na variavel
-            this.CNPJ = Console.ReadLine(); //"15086511000145";
+            Console.WriteLine("Informe o CNPJ da Companhia Aerea: ");
+            this.CNPJ = Console.ReadLine(); 
             string sql = "Select CNPJ from CompanhiaAerea where CNPJ = '" + this.CNPJ + "';";
             int verificar = banco.VerificarExiste(sql);
             while(verificar == 0)
             {
                 Console.WriteLine("Cnpj não corresponde a uma Cia Aerea, informe novamente: ");
-                this.CNPJ = Console.ReadLine();//"15086511000145";
+                this.CNPJ = Console.ReadLine();
                 sql = "Select CNPJ from CompanhiaAerea where CNPJ = '" + this.CNPJ + "';";
                 verificar = banco.VerificarExiste(sql);
             }    
@@ -211,15 +211,9 @@ namespace Proj_ON_THE_FLY
                 Console.Write("ID_ANAC: ");
                 this.Inscricao = Console.ReadLine().ToUpper();
             }
-
-            //pedir o cnpj 
-            //this.CNPJ = "15086511000145";
-
             Console.Clear();
             String sql = $"Select InscricaoANAC,CNPJ,DataCadastro,Situacao,UltimaVenda,Capacidade From Aeronave Where InscricaoANAC=('{this.Inscricao}');";
             banco = new ConexaoBD();
-
-            //switch
             if (!string.IsNullOrEmpty(banco.LocalizarDado(conecta, sql, 3)))
             {
                 Console.WriteLine("\nDeseja Alterar a Informação de algum Campo ? ");

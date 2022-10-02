@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using OnTheFLyIndividual;
 
 namespace OnTheFly_BD
@@ -21,16 +20,6 @@ namespace OnTheFly_BD
         public Voo voo = new Voo();
         public Venda() { }
 
-        //public void (SqlConnection conexaosql)
-        //{
-        //    //verificar bloqueados
-        //    //verificar ID passagem
-        //    //id voo
-        //    //valor passagem
-        //    Data_venda = DateTime.Now;
-        //    p.ConsultarPassageiro(conexaosql);
-        //    this.Cpf = p.Cpf;
-        //}
         public void CadastrarVenda(SqlConnection conexaosql)
         {
             int assentosOcupados, capacidade;
@@ -48,10 +37,6 @@ namespace OnTheFly_BD
                     Console.Write("CPF: ");
                     this.Cpf = Console.ReadLine();
                 }
-                // sql = $"SELECT Cpf FROM Cpf_Restrito where Cpf = '{this.Cpf}';";
-                //int retorno = banco.VerificarExiste(sql);
-                //if (retorno != 0)
-                //{
                 Console.Clear();
                 Console.WriteLine("Gostaria de iniciar uma venda de passagens?\n\n[1] Sim\n[2] Não");
                 int op = int.Parse(Console.ReadLine());
@@ -62,15 +47,10 @@ namespace OnTheFly_BD
                 }
                 switch (op)
                 {
-                    //adicionar Passagem na tabela de venda no banco
-                    //Ver a união de tabela. 
-                    //testar a classe venda 
-                    //fazer a classe itemvenda(dependendo da analise)
-                    //conversar com o pestana
-                    case 1:                      
+                    case 1:
                         this.Data_venda = DateTime.Now;
                         Console.WriteLine("Data da venda: " + this.Data_venda);
-                        Console.WriteLine("Quantas passagens voce gostaria de adquirir? (Maximo 4 por Venda)");//perguntar quantas passagem!! 
+                        Console.WriteLine("Quantas passagens voce gostaria de adquirir? (Maximo 4 por Venda)");
                         int contaPassagem = int.Parse(Console.ReadLine());
                         while (contaPassagem < 1 || contaPassagem > 4)
                         {
@@ -123,10 +103,8 @@ namespace OnTheFly_BD
                                         banco.InserirDado(conexaosql, sqll);
                                         sqll = $"insert VendaPassageiro(DataVenda, ValorTotal, Cpf) values ('{DateTime.Now}','{this.Valor_Total}','{this.Cpf}');";
                                         banco.InserirDado(conexaosql, sqll);
-                                        //AssentosOcupados
                                         string update = $"Update Voo set AssentosOcupados = {assentosOcupados + 1} where Id = '{idVoo}'";
                                         banco.EditarDado(conexaosql, update);
-                                        //Capacidade do Voo
                                         update = $"Update Aeronave set Capacidade = {capacidade - 1} where InscricaoANAC = '{Inscricao}'";
                                         banco.EditarDado(conexaosql, update);
                                         Console.WriteLine("\n### Cadastro de Venda com Sucesso ###\nPressione uma tecla para prosseguir!");
@@ -161,12 +139,6 @@ namespace OnTheFly_BD
                     default:
                         break;
                 }
-                //}
-                //else
-                //{
-                //    Console.WriteLine("Venda não pode ser finalizada, o cpf esta restrito!! \nAperte enter para sair.");
-                //    Console.ReadKey();
-                //}
             }
             else
             {
@@ -198,7 +170,7 @@ namespace OnTheFly_BD
             do
             {
                 Console.Clear();
-                Console.WriteLine("Escolha a opção desejada:\n\n[1] Cadastrar\n[2] Localizar\n[3] Editar\n[4] voltar ao menu \n[0] Sair");
+                Console.WriteLine("Escolha a opção desejada:\n\n[1] Cadastrar\n[2] Localizar\n[3] Deletar\n[4] Registro por Registro \n[5] Voltar ao Menu anterior \n[0] Sair do Programa");
                 op = int.Parse(Console.ReadLine());
                 CompanhiaAerea cia = new CompanhiaAerea();
                 switch (op)
@@ -211,13 +183,18 @@ namespace OnTheFly_BD
                         Program.Menu();
                         break;
                     case 2:
-                        //localizar tabela venda
+                        LocalizarVenda(conexaosql);
+                        Program.Menu();
                         break;
                     case 3:
-                        //editar registro da tabela venda
+                        DeletarVenda(conexaosql);
+                        Program.Menu();
                         break;
                     case 4:
-                        //voltar ao menu 
+                        RegistroPRegistroVenda(conexaosql);
+                        Program.Menu();
+                        break;
+                    case 5:
                         Program.Menu();
                         break;
                     default:
@@ -249,6 +226,105 @@ namespace OnTheFly_BD
             //        Console.WriteLine("");
             //    }
             //return destinoEscolhido;
+        }
+        public void LocalizarVenda(SqlConnection conexaosql)
+        {
+            Console.Clear();
+            Console.WriteLine("### Localizar Venda ###");
+            Console.WriteLine("Informe o ID da venda (4 dígitos numéricos):");
+            int id = int.Parse(Console.ReadLine());
+            string query = "select Id from PassagemVenda where Id = '" + id + "';";
+            int verificar = banco.VerificarExiste(query);
+            if (verificar == 0)
+            {
+                Console.WriteLine("Passagem nao localizada!!\nPressione alguma tecla pra prosseguir.");
+                Console.ReadKey();
+            }
+            else
+            {
+                string sql = "Select Id, DataVenda, Passageiro, ValorTotal, Voo, IDItemVenda, ValorUnitario from PassagemVenda where id = '" + id + "';";
+                banco.LocalizarDado(conexaosql, sql, 7);
+                Program.PressioneContinuar();
+            }
+        }
+        public void DeletarVenda(SqlConnection conexaosql)
+        {
+            Console.Clear();
+            Console.WriteLine("### Atualizar Venda ###");
+            Console.WriteLine("Informe o ID da venda (4 dígitos numéricos):");
+            int id = int.Parse(Console.ReadLine());
+            string query = "select Id from PassagemVenda where Id = '" + id + "';";
+            int verificar = banco.VerificarExiste(query);
+            if (verificar == 0)
+            {
+                Console.WriteLine("Passagem nao localizada!!\nPressione alguma tecla pra prosseguir.");
+                Console.ReadKey();
+            }
+            else
+            {
+                string sql = "Select Id, DataVenda, Passageiro, ValorTotal, Voo, IDItemVenda, ValorUnitario from PassagemVenda where id = '" + id + "';";
+                banco.LocalizarDado(conexaosql, sql, 7);
+                string delete = "delete from PassagemVenda where Id = '" + id + "';";
+                banco.DeletarDado(conexaosql, delete);
+                Console.WriteLine("### Venda removida com sucesso ###");
+                Program.PressioneContinuar();
+            }
+        }
+        public void RegistroPRegistroVenda(SqlConnection conecta)
+        {
+            List<string> venda = new();
+            conecta.Open();
+            string sql = "Select Id, DataVenda, Passageiro, ValorTotal, Voo, IDItemVenda, ValorUnitario from PassagemVenda";
+            SqlCommand cmd = new SqlCommand(sql, conecta);
+            SqlDataReader reader = null;
+            using (reader = cmd.ExecuteReader())
+            {
+                Console.WriteLine("\n\t### Venda Localizada ###\n");
+                while (reader.Read())
+                {
+                        venda.Add(Convert.ToString(reader.GetInt32(0)));
+                }
+            }
+            conecta.Close();
+            for (int i = 0; i < venda.Count; i++)
+            {
+                string op;
+                do
+                {
+                    Console.Clear();
+                    Console.WriteLine("### Venda ###\nDigite para navegar:\n[1] Próximo Cadasatro\n[2] Cadastro Anterior" +
+                        "\n[3] Último cadastro\n[4] Voltar ao Início\n[s] Sair\n");
+                    Console.WriteLine($"Cadastro [{i + 1}] de [{venda.Count}]");
+                    //Imprimi o primeiro da lista
+                    string query = "Select Id, DataVenda, Passageiro, ValorTotal, Voo, IDItemVenda, ValorUnitario from PassagemVenda where Id = '" + venda[i] + "';";
+                    banco.LocalizarDado(conecta, query, 7);
+                    Console.Write("Opção: ");
+                    op = Console.ReadLine();
+                    if (op != "1" && op != "2" && op != "3" && op != "4" && op != "s")
+                    {
+                        Console.WriteLine("Opção inválida!");
+                        Thread.Sleep(2000);
+                    }
+                    //Sai do método
+                    else if (op.Contains("s"))
+                        return;
+                    //Volta no Cadastro Anterior
+                    else if (op.Contains("2"))
+                        if (i == 0)
+                            i = 0;
+                        else
+                            i--;
+                    //Vai para o fim da lista
+                    else if (op.Contains("3"))
+                        i = venda.Count - 1;
+                    //Volta para o inicio da lista
+                    else if (op.Contains("4"))
+                        i = 0;
+                    //Vai para o próximo da lista
+                } while (op != "1");
+                if (i == venda.Count - 1)
+                    i--;
+            }
         }
     }
 }
