@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Transactions;
 using Proj_ON_THE_FLY;
 
 namespace OnTheFLyIndividual
@@ -14,7 +12,7 @@ namespace OnTheFLyIndividual
     {
         public static ConexaoBD conexao = new ConexaoBD();
         public string IdPassagem { get; set; }
-        public Voo voo { get; set; } 
+        public Voo voo { get; set; }
         public DateTime DataUltimaOperacao { get; set; }
         public float Valor { get; set; }
         public string SituacaoPassagem { get; set; }
@@ -48,8 +46,10 @@ namespace OnTheFLyIndividual
             }
             return aux;
         }
-        public void CadastrarPassagem(SqlConnection conectar, string idVoo) 
+        public void CadastrarPassagem(SqlConnection conectar, string idVoo)
         {
+            Console.Clear();
+            Program.CabecalhoOntheFly();
             Voo voo = new Voo();
             string sql = "Select Id from Voo;";
             int verificar = conexao.VerificarExiste(sql);
@@ -59,13 +59,13 @@ namespace OnTheFLyIndividual
                 this.IdPassagem = "PA" + valorId.ToString();
                 Console.WriteLine("Id da passagem definido como: " + IdPassagem);
                 voo.Id = idVoo;
-                Console.WriteLine("Id de voo: "+voo.Id);
+                Console.WriteLine("Id de voo: " + voo.Id);
                 this.DataUltimaOperacao = DateTime.Now;
                 string parametro = "Destino";
                 sql = $"select Destino from Voo where Id = '{idVoo}';";
                 string destino = ConexaoBD.RetornoDados(sql, conectar, parametro);
                 voo.Destino = destino;
-                if(voo.Destino == "BSB")
+                if (voo.Destino == "BSB")
                 {
                     this.Valor = 1500;
                 }
@@ -80,19 +80,20 @@ namespace OnTheFLyIndividual
                 Console.WriteLine("valor da passagem: " + this.Valor);
                 Console.WriteLine("Informe a situação da passagem (P - Paga | R - Reservada): ");
                 this.SituacaoPassagem = Console.ReadLine().ToUpper();
-                while(!this.SituacaoPassagem.Equals("P") && !this.SituacaoPassagem.Equals("R"))
+                while (!this.SituacaoPassagem.Equals("P") && !this.SituacaoPassagem.Equals("R"))
                 {
                     Console.WriteLine("Valor informado inválido, informe novamente:");
                     this.SituacaoPassagem = Console.ReadLine().ToUpper();
                 }
-                Console.WriteLine("Situação da passagem: "+this.SituacaoPassagem);
+                Console.WriteLine("Situação da passagem: " + this.SituacaoPassagem);
                 string query = $"insert into Passagem(Id, IdVoo, DataUltimaOperacao, Valor, Situacao) values " +
                     $"('{this.IdPassagem}','{voo.Id}','{this.DataUltimaOperacao}','{this.Valor}','{this.SituacaoPassagem}');";
-                conexao.InserirDado(conectar,query);
+                conexao.InserirDado(conectar, query);
             }
             else
             {
                 Console.Clear();
+                Program.CabecalhoOntheFly();
                 Console.WriteLine("Desculpa, impossível cadastrar passagem, pois nao temos nenhuma voo Cadastrado");
                 Console.WriteLine("Pressione uma tecla para prosseguir");
                 Console.ReadKey();
@@ -100,95 +101,127 @@ namespace OnTheFLyIndividual
         }
         public void AtualizarPassagem(SqlConnection conexaosql)
         {
-            int opc = 0;
-            Console.Clear();
-            Console.WriteLine("### Atualizar Passagem ###");
-            Console.WriteLine("Informe o ID da passagem (PA0000 – Dois dígitos PA, seguidos de 4 dígitos numéricos:");
-            string id = Console.ReadLine();
-            string query = "select Id, IdVoo from Passagem where id = '" + id + "';";
-            int verificar = conexao.VerificarExiste(query);
-            if (verificar == 0)
+            string query = $"select Id from Passagem";
+            int verificarVoo = conexao.VerificarExiste(query);
+            if (verificarVoo != 0)
             {
-                Console.WriteLine("Passagem nao localizada!!\nPressione alguma tecla pra prosseguir.");
-                Console.ReadKey();
+
+                int opc = 0;
+                Console.Clear();
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("### Atualizar Passagem ###");
+                Console.WriteLine("Informe o ID da passagem (PA0000 – Dois dígitos PA, seguidos de 4 dígitos numéricos:");
+                string id = Console.ReadLine();
+                query = "select Id, IdVoo from Passagem where id = '" + id + "';";
+                int verificar = conexao.VerificarExiste(query);
+                if (verificar == 0)
+                {
+                    Console.WriteLine("Passagem nao localizada!!\nPressione alguma tecla pra prosseguir.");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.Clear();
+                    Program.CabecalhoOntheFly();
+                    Console.WriteLine("### Alterar Passagem ###");
+                    Console.WriteLine("\nDigite a Opção que Deseja Editar");
+                    Console.WriteLine("[1] Ultima Data Alterada");
+                    Console.WriteLine("[2] Situacao");
+                    Console.WriteLine("[3] Valor");
+                    Console.Write("\nDigite: ");
+                    opc = int.Parse(Console.ReadLine());
+                    while (opc < 1 || opc > 3)
+                    {
+                        Console.WriteLine("\nDigite uma Opcao Valida:");
+                        Console.Write("\nDigite: ");
+                        opc = int.Parse(Console.ReadLine());
+                    }
+                    switch (opc)
+                    {
+                        case 1:
+                            Console.Clear();
+                            Program.CabecalhoOntheFly();
+                            Console.WriteLine("### Alterar Passagem ###");
+                            Console.WriteLine("Data alterada com sucesso! ");
+                            this.DataUltimaOperacao = DateTime.Now;
+                            string sql = "update Passagem set DataUltimaOperacao = '" + this.DataUltimaOperacao + "' where Id = '" + id + "';";
+                            conexao.EditarDado(conexaosql, sql);
+                            Program.PressioneContinuar();
+                            break;
+                        case 2:
+                            Console.Clear();
+                            Program.CabecalhoOntheFly();
+                            Console.WriteLine("### Alterar Passagem ###");
+                            Console.WriteLine("Informe a nova situacao: \nL – Livre \nR – Reservada \nP – Paga ");
+                            this.SituacaoPassagem = Console.ReadLine();
+                            while (this.SituacaoPassagem != "L" && this.SituacaoPassagem != "R" && this.SituacaoPassagem != "P")
+                            {
+                                Console.WriteLine("Situacao de passagem inválida informada, digite o novamente: ");
+                                this.SituacaoPassagem = Console.ReadLine();
+                            }
+                            sql = "update Passagem set Situacao = '" + this.DataUltimaOperacao + "' where Id = '" + id + "';";
+                            conexao.EditarDado(conexaosql, sql);
+                            Program.PressioneContinuar();
+                            break;
+                        case 3:
+                            Console.Clear();
+                            Program.CabecalhoOntheFly();
+                            Console.WriteLine("### Alterar Passagem ###");
+                            Console.WriteLine("Informe o novo valor da passagem: ");
+                            this.Valor = float.Parse(Console.ReadLine());
+                            while (this.Valor < 100 || this.Valor > 999.99)
+                            {
+                                Console.WriteLine("Valor inválido informado, tente novamente: ");
+                                this.Valor = float.Parse(Console.ReadLine());
+                            }
+                            sql = "update Passagem set Valor = '" + this.Valor + "' where Id = '" + id + "';";
+                            conexao.EditarDado(conexaosql, sql);
+                            Program.PressioneContinuar();
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
             else
             {
                 Console.Clear();
-                Console.WriteLine("### Alterar Passagem ###");
-                Console.WriteLine("\nDigite a Opção que Deseja Editar");
-                Console.WriteLine("[1] Ultima Data Alterada");
-                Console.WriteLine("[2] Situacao");
-                Console.WriteLine("[3] Valor");
-                Console.Write("\nDigite: ");
-                opc = int.Parse(Console.ReadLine());
-                while (opc < 1 || opc > 3)
-                {
-                    Console.WriteLine("\nDigite uma Opcao Valida:");
-                    Console.Write("\nDigite: ");
-                    opc = int.Parse(Console.ReadLine());
-                }
-                switch (opc)
-                {
-                    case 1:
-                        Console.Clear();
-                        Console.WriteLine("### Alterar Passagem ###");
-                        Console.WriteLine("Data alterada com sucesso! ");
-                        this.DataUltimaOperacao = DateTime.Now;
-                        string sql = "update Passagem set DataUltimaOperacao = '" + this.DataUltimaOperacao + "' where Id = '" + id + "';";
-                        conexao.EditarDado(conexaosql, sql);
-                        Program.PressioneContinuar();
-                        break;
-                    case 2:
-                        Console.Clear();
-                        Console.WriteLine("### Alterar Passagem ###");
-                        Console.WriteLine("Informe a nova situacao (L – Livre, R – Reservada ou P – Paga): ");
-                        this.SituacaoPassagem = Console.ReadLine();
-                        while(this.SituacaoPassagem != "L" && this.SituacaoPassagem != "R" && this.SituacaoPassagem != "P")
-                        {
-                            Console.WriteLine("Situacao de passagem inválida informada, digite o novamente: ");
-                            this.SituacaoPassagem = Console.ReadLine();
-                        }
-                        sql = "update Passagem set Situacao = '" + this.DataUltimaOperacao + "' where Id = '" + id + "';";
-                        conexao.EditarDado(conexaosql, sql);
-                        Program.PressioneContinuar();
-                        break;
-                    case 3:
-                        Console.Clear();
-                        Console.WriteLine("### Alterar Passagem ###");
-                        Console.WriteLine("informe o novo valor da passagem: ");
-                        this.Valor = float.Parse(Console.ReadLine());
-                        while (this.Valor < 100 || this.Valor > 999.99)
-                        {
-                            Console.WriteLine("Valor inválido informado, tente novamente: ");
-                            this.Valor = float.Parse(Console.ReadLine());
-                        }
-                        sql = "update Passagem set Valor = '" + this.Valor + "' where Id = '" + id + "';";
-                        conexao.EditarDado(conexaosql, sql);
-                        Program.PressioneContinuar();
-                        break;
-                    default:
-                        break;
-                }
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("Não existem cadastros de passagens, cadastre uma passagem antes de Atualizar!!");
+                Program.PressioneContinuar();
             }
         }
         public void LocalizarPassagem(SqlConnection conexaosql)
         {
-            Console.Clear();
-            Console.WriteLine("### Localizar Passagem ###");
-            Console.WriteLine("Informe o ID da passagem (PA0000 – Dois dígitos PA, seguidos de 4 dígitos numéricos:");
-            string id = Console.ReadLine();
-            string query = "select Id, IdVoo from Passagem where id = '" + id + "';";
-            int verificar = conexao.VerificarExiste(query);
-            if(verificar == 0)
+            string query = $"select Id from Passagem";
+            int verificarVoo = conexao.VerificarExiste(query);
+            if (verificarVoo != 0)
             {
-                Console.WriteLine("Passagem nao localizada!!\nPressione alguma tecla pra prosseguir.");
-                Console.ReadKey();
+
+                Console.Clear();
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("### Localizar Passagem ###");
+                Console.WriteLine("Informe o ID da passagem (PA0000 – Dois dígitos PA, seguidos de 4 dígitos numéricos:");
+                string id = Console.ReadLine();
+                query = "select Id, IdVoo from Passagem where id = '" + id + "';";
+                int verificar = conexao.VerificarExiste(query);
+                if (verificar == 0)
+                {
+                    Console.WriteLine("Passagem nao localizada!!\nPressione alguma tecla pra prosseguir.");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    string sql = "select Id, IdVoo, DataUltimaOperacao, Valor, Situacao from Passagem where id = '" + id + "';";
+                    conexao.LocalizarDado(conexaosql, sql, 5);
+                }
             }
             else
             {
-                string sql = "select Id, IdVoo, DataUltimaOperacao, Valor, Situacao from Passagem where id = '"+id+"';";
-                conexao.LocalizarDado(conexaosql, sql,5);
+                Console.Clear();
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("Não existem cadastros de passagens, cadastre uma passagem antes de Localizar!!");
+                Program.PressioneContinuar();
             }
         }
         public void RegistroPorRegistro(SqlConnection conecta)
@@ -203,7 +236,7 @@ namespace OnTheFLyIndividual
                 Console.WriteLine("\n\t### Passagem Localizada ###\n");
                 while (reader.Read())
                 {
-                        Passagem.Add(reader.GetString(0));
+                    Passagem.Add(reader.GetString(0));
                 }
             }
             conecta.Close();

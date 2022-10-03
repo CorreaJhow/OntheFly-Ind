@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Proj_ON_THE_FLY;
 
 namespace OnTheFLyIndividual
@@ -44,7 +40,7 @@ namespace OnTheFLyIndividual
                 "\nDataCadastro: " + DataCadastro +
                 "\nSituacao do Vôo: " + Situacao;
         }
-        private static int RandomCadastroVoo()
+        private int RandomCadastroVoo()
         {
             Random rand = new Random();
             int[] numero = new int[100];
@@ -69,7 +65,7 @@ namespace OnTheFLyIndividual
             if (verificar != 0)
             {
                 Console.Clear();
-                Console.WriteLine("-----------------------------");
+                Program.CabecalhoOntheFly();
                 Console.WriteLine("Bem vindo ao cadastro de voo.");
                 Console.WriteLine("-----------------------------");
                 int valorId = RandomCadastroVoo();
@@ -104,12 +100,11 @@ namespace OnTheFLyIndividual
                     Situacao = char.Parse(Console.ReadLine().ToUpper());
                 }
                 sql = "insert into Voo (Id, InscricaoAeronave, DataCadastro, AssentosOcupados, Situacao, DataVoo, Destino) values ('" + this.Id + "', '" + aeronave.Inscricao + "', '" +
-                this.DataCadastro + "', '"+this.AssentosOcupados+"', '" + this.Situacao + "', '" + this.DataVoo + "', '" + this.Destino + "');";
-                Console.WriteLine("Comando executado no SQL\n"); //tirar dps 
-                Console.WriteLine(sql); //tirar dps 
-                Console.ReadKey();
+                this.DataCadastro + "', '" + this.AssentosOcupados + "', '" + this.Situacao + "', '" + this.DataVoo + "', '" + this.Destino + "');";
                 conexao.InserirDado(conexaosql, sql);
                 Console.WriteLine("Inscrição de Voo realizada com sucesso!");
+                Console.WriteLine("Pressione uma tecla para prosseguir");
+                Console.ReadKey();
             }
             else
             {
@@ -147,90 +142,137 @@ namespace OnTheFLyIndividual
         }
         public void AtualizarVoo(SqlConnection sqlConnection)
         {
-            Console.WriteLine("Atualizar dados Voo");
-            Console.WriteLine("Insira o id do Voo que deseja alterar (Exemplo = 'V1234'): ");
-            string idVoo = Console.ReadLine();
-            string sql = "Select Id from Voo where Id = '" + idVoo + "';";
-            int verificar = conexao.VerificarExiste(sql);
-            if (verificar != 0)
+            string query = $"select Id from Voo";
+            int verificarVoo = conexao.VerificarExiste(query);
+            if (verificarVoo != 0)
             {
-                Console.WriteLine("Escolha o que voce deseja atualizar: \n[1] Destino \n[2] Aeronave \n[3] Data de Voo \n[4] Situação do Voo");
-                int op = int.Parse(Console.ReadLine());
-                while (op < 1 || op > 5)
+                Console.Clear();
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("Atualizar dados Voo");
+                Console.WriteLine("Insira o id do Voo que deseja alterar (Exemplo = 'V1234'): ");
+                string idVoo = Console.ReadLine();
+                string sql = "Select Id from Voo where Id = '" + idVoo + "';";
+                int verificar = conexao.VerificarExiste(sql);
+                if (verificar != 0)
                 {
-                    Console.WriteLine("Opcao INVALIDA, informe um valor válido: ");
-                    op = int.Parse(Console.ReadLine());
-                }
-                switch (op)
-                {
-                    case 1:
-                        Console.WriteLine("Qual o novo destino que deseja informar?: ");
-                        string destino = DestinoVoo();
-                        sql = "update Voo set Destino = '" + destino + "' where Id = '" + idVoo + "';";
-                        conexao.EditarDado(sqlConnection, sql);
-                        Console.WriteLine("Alteração efetuada com sucesso!");
-                        break;
-                    case 2:
-                        Console.WriteLine("Qual a nova aeronave que deseja informar?: "); //necessidade de classe aeronave
-                        break;
-                    case 3:
-                        Console.WriteLine("Qual a nova data de voo que deseja informar?: ");
-                        DateTime dataVoo = DateTime.Parse(Console.ReadLine());
-                        if (dataVoo <= DateTime.Now)
-                        {
-                            Console.WriteLine("Essa data é inválida, informe novamente: ");
-                            dataVoo = DateTime.Parse(Console.ReadLine());
-                        }
-                        sql = "update Voo set DataVoo = '" + dataVoo + "' where Id = '" + idVoo + "';";
-                        conexao.EditarDado(sqlConnection, sql);
-                        break;
-                    case 4:
-                        Console.WriteLine("Qual a nova situacão do voo que deseja informar?: \n[A] Ativo \n[C] Cancelado ");
-                        char situacao = char.Parse(Console.ReadLine().ToUpper());
-                        while (situacao != 'A' && situacao != 'C')
-                        {
-                            Console.WriteLine("O valor informado é inválido, por favor informe novamente!\n[A] Ativo \n[C] Cancelado");
-                            situacao = char.Parse(Console.ReadLine().ToUpper());
+                    Console.WriteLine("Escolha o que voce deseja atualizar: \n[1] Destino \n[2] Aeronave \n[3] Data de Voo \n[4] Situação do Voo");
+                    int op = int.Parse(Console.ReadLine());
+                    while (op < 1 || op > 4)
+                    {
+                        Console.WriteLine("Opcao INVALIDA, informe um valor válido: ");
+                        op = int.Parse(Console.ReadLine());
+                    }
+                    switch (op)
+                    {
+                        case 1:
+                            Console.WriteLine("Qual o novo destino que deseja informar?: ");
+                            string destino = DestinoVoo();
+                            sql = "update Voo set Destino = '" + destino + "' where Id = '" + idVoo + "';";
+                            conexao.EditarDado(sqlConnection, sql);
+                            Console.WriteLine("Alteração efetuada com sucesso!");
+                            break;
+                        case 2:
+                            Console.WriteLine("Qual a nova aeronave que deseja informar?: ");
+                            string aeronave = Console.ReadLine();
+                            sql = $"select InscricaoAeronave from Voo where InscricaoAeronave = '{aeronave}'";
+                            int verificaAeronave = conexao.VerificarExiste(sql);
+                            if (verificaAeronave != 0)
+                            {
+                                sql = $"update Voo set InscricaoAeronave = '{aeronave}' where Id = '{idVoo}';";
+                                conexao.EditarDado(sqlConnection, sql);
+                                Console.WriteLine("Alteração efetuada com sucesso!");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Essa Aeronave não existe ou nao esta cadastrada em nenhum voo, tente novamente depois!");
+                                Program.PressioneContinuar();
+                            }
+                            break;
+                        case 3:
+                            Console.WriteLine("Qual a nova data de voo que deseja informar?: ");
+                            DateTime dataVoo = DateTime.Parse(Console.ReadLine());
+                            if (dataVoo <= DateTime.Now)
+                            {
+                                Console.WriteLine("Essa data é inválida, informe novamente: ");
+                                dataVoo = DateTime.Parse(Console.ReadLine());
+                            }
+                            sql = "update Voo set DataVoo = '" + dataVoo + "' where Id = '" + idVoo + "';";
+                            conexao.EditarDado(sqlConnection, sql);
+                            break;
+                        case 4:
+                            Console.WriteLine("Qual a nova situacão do voo que deseja informar?: \n[A] Ativo \n[C] Cancelado ");
+                            char situacao = char.Parse(Console.ReadLine().ToUpper());
+                            while (situacao != 'A' && situacao != 'C')
+                            {
+                                Console.WriteLine("O valor informado é inválido, por favor informe novamente!\n[A] Ativo \n[C] Cancelado");
+                                situacao = char.Parse(Console.ReadLine().ToUpper());
 
-                        }
-                        sql = "update Voo set Situacao = '" + situacao + "' where Id = '" + idVoo + "';";
-                        conexao.EditarDado(sqlConnection, sql);
-                        break;
-                    default:
-                        break;
+                            }
+                            sql = "update Voo set Situacao = '" + situacao + "' where Id = '" + idVoo + "';";
+                            conexao.EditarDado(sqlConnection, sql);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Valor de ID de voo não encontrado!!");
+                    Console.WriteLine("Pressione uma tecla para Prosseguir...");
+                    Console.ReadKey();
                 }
             }
             else
             {
-                Console.WriteLine("Valor de ID de voo não encontrado!!");
-                Console.WriteLine("Pressione uma tecla para Prosseguir...");
-                Console.ReadKey();
+                Console.Clear();
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("Cadastre um Voo antes de de atualizar!");
+                Program.PressioneContinuar();
             }
         }
         public void LocalizarVoo(SqlConnection sqlConnection)
         {
-            Console.WriteLine("Localizar dados Voo");
-            Console.WriteLine("Insira o id do Voo que deseja alterar (Exemplo = 'V1234'): ");
-            string idVoo = Console.ReadLine();
-            string sql = "Select Id from Voo where Id = '" + idVoo + "';";
-            int verificar = conexao.VerificarExiste(sql);
-            if (verificar != 0) //achou
+            string query = $"select Id from Voo";
+            int verificarVoo = conexao.VerificarExiste(query);
+            if (verificarVoo != 0)
             {
-                sql = "Select Id, InscricaoAeronave, DataVoo, DataCadastro, Destino, Situacao from Voo where Id = '" + idVoo + "';";
-                conexao.LocalizarDado(sqlConnection, sql, 2);
-                Console.WriteLine("Pressione enter para prosseguir...");
-                Console.ReadKey();
+
+                Console.Clear();
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("### Localizar dados Voo ###");
+                Console.WriteLine("Insira o id do Voo que deseja alterar (Exemplo = 'V1234'): ");
+                string idVoo = Console.ReadLine();
+                string sql = "Select Id from Voo where Id = '" + idVoo + "';";
+                int verificar = conexao.VerificarExiste(sql);
+                if (verificar != 0)
+                {
+                    sql = "Select Id, InscricaoAeronave, DataVoo, DataCadastro, Destino, Situacao from Voo where Id = '" + idVoo + "';";
+                    conexao.LocalizarDado(sqlConnection, sql, 2);
+                    Console.WriteLine("Pressione enter para prosseguir...");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.WriteLine("O voo nao foi encontrado!");
+                    Console.WriteLine("Pressione enter para prosseguir...");
+                    Console.ReadKey();
+                }
             }
-            else //nao achou
+            else
             {
-                Console.WriteLine("O voo nao foi encontrado!");
-                Console.WriteLine("Pressione enter para prosseguir...");
-                Console.ReadKey();
+                Console.Clear();
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("Cadastre um Voo antes de de localizar!!");
+                Program.PressioneContinuar();
             }
         }
         public void RegistroPorRegistro(SqlConnection conecta)
         {
-            List<string> voo = new();
+            string query = $"select Id from Voo";
+            int verificarVoo = conexao.VerificarExiste(query);
+            if (verificarVoo != 0)
+            { 
+                List<string> voo = new();
             conecta.Open();
             string sql = "Select Id, InscricaoAeronave, DataVoo, DataCadastro, Destino, Situacao from Voo";
             SqlCommand cmd = new SqlCommand(sql, conecta);
@@ -257,7 +299,7 @@ namespace OnTheFLyIndividual
                         "\n[3] Último cadastro\n[4] Voltar ao Início\n[s] Sair\n");
                     Console.WriteLine($"Cadastro [{i + 1}] de [{voo.Count}]");
                     //Imprimi o primeiro da lista
-                    string query = "Select Id, InscricaoAeronave, DataVoo, DataCadastro, Destino, Situacao from Voo where Id = '" + voo[i] + "';";
+                    query = "Select Id, InscricaoAeronave, DataVoo, DataCadastro, Destino, Situacao from Voo where Id = '" + voo[i] + "';";
                     conexao.LocalizarDado(conecta, query, 2);
                     Console.Write("Opção: ");
                     op = Console.ReadLine();
@@ -285,6 +327,14 @@ namespace OnTheFLyIndividual
                 } while (op != "1");
                 if (i == voo.Count - 1)
                     i--;
+            }
+            }
+            else
+            {
+                Console.Clear();
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("Cadastre um Voo antes de de percorrer registros!!");
+                Program.PressioneContinuar();
             }
         }
     }

@@ -33,7 +33,8 @@ namespace OnTheFly_BD
             this.UltimoVoo = DateTime.Now;
             this.DataCadastro = DateTime.Now;
             Console.Clear();
-            Console.WriteLine(">>> Cadastro de Companhia Aérea <<<\n\n");
+            Program.CabecalhoOntheFly();
+            Console.WriteLine("### Cadastro de Companhia Aérea ###\n\n");
             Console.Write("Digite o CNPJ da Companhia Aérea: ");
             this.Cnpj = Console.ReadLine();
             if (ValidarCnpj(this.Cnpj))
@@ -74,95 +75,134 @@ namespace OnTheFly_BD
         }
         public void LocalizarCia(SqlConnection conexaosql)
         {
-            CompanhiaAerea cia = new CompanhiaAerea();
-            do
+            string query = $"select CNPJ from CompanhiaAerea";
+            int verificar = banco.VerificarExiste(query);
+            if (verificar != 0)
             {
-                Console.Clear();
-                Console.WriteLine(">>> Localizar Companhia Aérea: <<<\n\n");
-                Console.Write("Digite o CNPJ buscado: ");
-                this.Cnpj = Console.ReadLine();
-            } while (ValidarCnpj(this.Cnpj) == false || this.Cnpj.Length < 14);
-            Console.Clear();
-            string sql = $"SELECT CNPJ,RazaoSocial,DataAbertura,DataCadastro,UltimoVoo,Situacao FROM CompanhiaAerea WHERE CNPJ = '{this.Cnpj}';";
-            banco = new ConexaoBD();
-            banco.LocalizarDado(conexaosql,sql,4);
-            Console.WriteLine("Aperte enter para contninuar.");
-            Console.ReadKey();
-            cia.MenuCiaAerea(conexaosql);
-        } 
-        public void EditarCia(SqlConnection conexaosql)
-        {
-            int opc = 0;
-            String sql;
-            CompanhiaAerea cia = new CompanhiaAerea();
-
-            Console.Clear();
-            Console.WriteLine(">>> Editar informações da Companhia Aérea: <<<\n");
-            Console.Write("Digite o CNPJ da Companhia buscada: ");
-            this.Cnpj = Console.ReadLine();
-            sql = $"SELECT CNPJ,RazaoSocial,DataAbertura,DataCadastro,UltimoVoo,Situacao FROM CompanhiaAerea WHERE CNPJ = '{this.Cnpj}';";
-            banco = new ConexaoBD();
-            if (!string.IsNullOrEmpty(banco.LocalizarDado(conexaosql,sql,4)))
-            {
-                Console.WriteLine("Digite a opção que deseja editar:\n\n1-Razão Social\n2-Data de Abertura\n3-Data de Cadastro\n4-Data do Último Vôo\n5-Situação");
-                opc = int.Parse(Console.ReadLine());
-                switch (opc)
+                CompanhiaAerea cia = new CompanhiaAerea();
+                do
                 {
-                    case 1:
-                        Console.Clear();
-                        Console.Write("Alterar Razão Social:\n");
-                        this.RazaoSocial = Console.ReadLine();
-                        sql = $"UPDATE CompanhiaAerea SET RazaoSocial = '{this.RazaoSocial}' WHERE CNPJ = '{this.Cnpj}';";
-                        break;
-                    case 2:
-                        Console.Clear();
-                        Console.Write("Alterar Data de Abertura:\n");
-                        this.DataAbertura = DateTime.Parse(Console.ReadLine());
-                        sql = $"UPDATE CompanhiaAerea SET DataAbertura = '{this.DataAbertura}' WHERE CNPJ = '{this.Cnpj}';";
-                        break;
-                    case 3:
-                        Console.Clear();
-                        Console.Write("Alterar Data de Cadastro:\n");
-                        this.DataCadastro = DateTime.Parse(Console.ReadLine());
-                        sql = $"UPDATE CompanhiaAerea SET DataCadastro = '{this.DataCadastro}' WHERE CNPJ = '{this.Cnpj}';";
-                        break;
-                    case 4:
-                        Console.Clear();
-                        Console.Write("Alterar Data do Último Vôo:\n");
-                        this.UltimoVoo = DateTime.Parse(Console.ReadLine());
-                        sql = $"UPDATE CompanhiaAerea SET UltimoVoo = '{this.UltimoVoo}' WHERE CNPJ = '{this.Cnpj}';";
-                        break;
-                    case 5:
-                        Console.Clear();
-                        Console.Write("Alterar Situação:\n");
-                        this.Situacao = Console.ReadLine();
-                        sql = $"UPDATE CompanhiaAerea SET Situacao = '{this.Situacao}' WHERE CNPJ = '{this.Cnpj}';";
-                        break;
-                    default:
-                        Console.WriteLine("Opção não encontrada!");
-                        break;
-                }
+                    Console.Clear();
+                    Program.CabecalhoOntheFly();
+                    Console.WriteLine("### Localizar Companhia Aérea: ###\n\n");
+                    Console.Write("Digite o CNPJ buscado: ");
+                    this.Cnpj = Console.ReadLine();
+                } while (ValidarCnpj(this.Cnpj) == false || this.Cnpj.Length < 14);
+                Console.Clear();
+                string sql = $"SELECT CNPJ,RazaoSocial,DataAbertura,DataCadastro,UltimoVoo,Situacao FROM CompanhiaAerea WHERE CNPJ = '{this.Cnpj}';";
                 banco = new ConexaoBD();
-                banco.EditarDado(conexaosql, sql);
-                Console.WriteLine("Alteração realizada com sucesso!\n\nAperte enter para continuar.");
+                banco.LocalizarDado(conexaosql, sql, 4);
+                Console.WriteLine("Aperte enter para contninuar.");
                 Console.ReadKey();
                 cia.MenuCiaAerea(conexaosql);
             }
             else
             {
-                Console.WriteLine("CNPJ inválido!Aperte enter para tentar novamente.");
-                Console.ReadKey();
-                cia.MenuCiaAerea(conexaosql);
+                Console.Clear();
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("Cadastre uma Cia Aerea antes de Localizar!!");
+                Program.PressioneContinuar();
+            }
+        }
+        public void EditarCia(SqlConnection conexaosql)
+        {
+            string query = $"select CNPJ from CompanhiaAerea";
+            int verificar = banco.VerificarExiste(query);
+            if (verificar != 0)
+            {
+                int opc = 0;
+                string sql;
+                CompanhiaAerea cia = new CompanhiaAerea();
+                Console.Clear();
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("### Editar informações da Companhia Aérea: ###\n");
+                Console.Write("Digite o CNPJ da Companhia buscada: ");
+                this.Cnpj = Console.ReadLine();
+                sql = $"SELECT CNPJ,RazaoSocial,DataAbertura,DataCadastro,UltimoVoo,Situacao FROM CompanhiaAerea WHERE CNPJ = '{this.Cnpj}';";
+                banco = new ConexaoBD();
+                if (!string.IsNullOrEmpty(banco.LocalizarDado(conexaosql, sql, 4)))
+                {
+                    Console.WriteLine("Digite a opção que deseja editar:\n\n[1] Razão Social\n[2] Data de Abertura\n[3] Data de Cadastro\n[4] Data do Último Vôo\n[5] Situação");
+                    opc = int.Parse(Console.ReadLine());
+                    switch (opc)
+                    {
+                        case 1:
+                            Console.Clear();
+                            Console.Write("Alterar Razão Social:\n");
+                            this.RazaoSocial = Console.ReadLine();
+                            sql = $"UPDATE CompanhiaAerea SET RazaoSocial = '{this.RazaoSocial}' WHERE CNPJ = '{this.Cnpj}';";
+                            break;
+                        case 2:
+                            Console.Clear();
+                            Console.Write("Alterar Data de Abertura:\n");
+                            this.DataAbertura = DateTime.Parse(Console.ReadLine());
+                            sql = $"UPDATE CompanhiaAerea SET DataAbertura = '{this.DataAbertura}' WHERE CNPJ = '{this.Cnpj}';";
+                            break;
+                        case 3:
+                            Console.Clear();
+                            Console.Write("Alterar Data de Cadastro:\n");
+                            this.DataCadastro = DateTime.Parse(Console.ReadLine());
+                            sql = $"UPDATE CompanhiaAerea SET DataCadastro = '{this.DataCadastro}' WHERE CNPJ = '{this.Cnpj}';";
+                            break;
+                        case 4:
+                            Console.Clear();
+                            Console.Write("Alterar Data do Último Vôo:\n");
+                            this.UltimoVoo = DateTime.Parse(Console.ReadLine());
+                            sql = $"UPDATE CompanhiaAerea SET UltimoVoo = '{this.UltimoVoo}' WHERE CNPJ = '{this.Cnpj}';";
+                            break;
+                        case 5:
+                            Console.Clear();
+                            Console.Write("Alterar Situação:\n");
+                            this.Situacao = Console.ReadLine();
+                            sql = $"UPDATE CompanhiaAerea SET Situacao = '{this.Situacao}' WHERE CNPJ = '{this.Cnpj}';";
+                            break;
+                        default:
+                            Console.WriteLine("Opção não encontrada!");
+                            break;
+                    }
+                    banco = new ConexaoBD();
+                    banco.EditarDado(conexaosql, sql);
+                    Console.WriteLine("Alteração realizada com sucesso!\n\nAperte enter para continuar.");
+                    Console.ReadKey();
+                    cia.MenuCiaAerea(conexaosql);
+                }
+                else
+                {
+                    Console.WriteLine("CNPJ inválido!Aperte enter para tentar novamente.");
+                    Console.ReadKey();
+                    cia.MenuCiaAerea(conexaosql);
+                }
+            }
+            else
+            {
+                Console.Clear();
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("Cadastre uma Cia Aerea antes de Editar!!");
+                Program.PressioneContinuar();
             }
         }
         public void DeletarCia(SqlConnection conexaosql)
         {
-            Console.WriteLine("\n>>> Deletar Companhia Aérea <<<");
-            Console.Write("\nDigite o CNPJ que deseja excluir: ");
-            this.Cnpj = Console.ReadLine();
-            string sql = $"Delete From CompanhiaAerea Where CNPJ=('{this.Cnpj}');";
-            banco = new ConexaoBD();
-            banco.DeletarDado(conexaosql, sql);
+            string query = $"select CNPJ from CompanhiaAerea";
+            int verificar = banco.VerificarExiste(query);
+            if (verificar != 0)
+            {
+                Console.Clear();
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("\n### Deletar Companhia Aérea ###");
+                Console.Write("\nDigite o CNPJ que deseja excluir: ");
+                this.Cnpj = Console.ReadLine();
+                string sql = $"Delete From CompanhiaAerea Where CNPJ=('{this.Cnpj}');";
+                banco = new ConexaoBD();
+                banco.DeletarDado(conexaosql, sql);
+            }
+            else
+            {
+                Console.Clear();
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("Cadastre uma Cia Aerea antes de Deletar!!");
+                Program.PressioneContinuar();
+            }
         }
         public void MenuCiaAerea(SqlConnection conexaosql)
         {
@@ -170,9 +210,11 @@ namespace OnTheFly_BD
             do
             {
                 Console.Clear();
-                Console.WriteLine("Escolha a opção desejada:\n\n[1] Cadastrar\n[2] Localizar\n[3] Editar\n[4] Bloqueados\n[0] Voltar ao Menu");
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("### Menu Companhia Aerea ###");
+                Console.WriteLine("Escolha a opção desejada:\n\n[1] Voltar ao Menu Anterior \n[2] Cadastrar\n[3] Localizar \n[4] Editar \n[5] Bloqueados \n[0] Voltar ao Menu");
                 op = int.Parse(Console.ReadLine());
-                while(op < 0 && op > 5)
+                while (op < 0 || op > 5)
                 {
                     Console.WriteLine("Opção inválida escolhida, informe novamente: ");
                     op = int.Parse(Console.ReadLine());
@@ -185,15 +227,18 @@ namespace OnTheFly_BD
                         Environment.Exit(0);
                         break;
                     case 1:
-                        cia.CadastrarCia(conexaosql);
+                        Program.Menu();
                         break;
                     case 2:
-                        cia.LocalizarCia(conexaosql);
+                        cia.CadastrarCia(conexaosql);
                         break;
                     case 3:
-                        cia.EditarCia(conexaosql);
+                        cia.LocalizarCia(conexaosql);
                         break;
                     case 4:
+                        cia.EditarCia(conexaosql);
+                        break;
+                    case 5:
                         MenuBloqueadas(conexaosql);
                         break;
                     default:
@@ -205,10 +250,15 @@ namespace OnTheFly_BD
         {
             int op;
             Console.Clear();
-            Console.WriteLine(">>> Companhias Bloqueadas <<<\n\n");
-            Console.WriteLine("Escolha a opção desejada: \n\n1- Consultar Companhia Bloqueadas\n2- Bloquear Companhias\n3- Desbloquear Companhias\n0- Sair ");
+            Program.CabecalhoOntheFly();
+            Console.WriteLine("### Companhias Bloqueadas ###\n\n");
+            Console.WriteLine("Escolha a opção desejada: \n\n[1] Consultar Companhia Bloqueadas\n[2] Bloquear Companhias\n[3] Desbloquear Companhias\n[0] Voltar ao Menu Anterior ");
             op = int.Parse(Console.ReadLine());
-
+            while (op < 0 || op > 5)
+            {
+                Console.WriteLine("Opção inválida escolhida, informe novamente: ");
+                op = int.Parse(Console.ReadLine());
+            }
             switch (op)
             {
                 case 0:
@@ -226,11 +276,13 @@ namespace OnTheFly_BD
             }
         }
         #endregion
+
         #region Cadastros bloqueadas
         public void CadastrarBloqueadas(SqlConnection conexaosql)
         {
             Console.Clear();
-            Console.WriteLine(">>> Cadastro de Companhia Aérea Bloqueada<<<\n\n");
+            Program.CabecalhoOntheFly();
+            Console.WriteLine("### Cadastro de Companhia Aérea Bloqueada ###\n\n");
             Console.WriteLine("Digite o CNPJ da Companhia Aérea que deseja bloquear: ");
             this.Cnpj = Console.ReadLine();
             if (ValidarCnpj(this.Cnpj))
@@ -238,7 +290,7 @@ namespace OnTheFly_BD
                 string sql = $"INSERT INTO Cnpj_Restrito(Cnpj) VALUES ('{this.Cnpj}');";
                 banco = new ConexaoBD();
                 banco.InserirDado(conexaosql, sql);
-                Console.WriteLine("CNPJ Cadastrado com sucesso!Aperte enter para continuar.");
+                Console.WriteLine("CNPJ Cadastrado em RESTRITOS com sucesso! \nAperte enter para continuar.");
                 Console.ReadKey();
             }
             else
@@ -250,7 +302,8 @@ namespace OnTheFly_BD
         public void DeletarBloqueadas(SqlConnection conexaosql)
         {
             Console.Clear();
-            Console.WriteLine("\n>>> Deletar Companhia Aérea <<<\n\n");
+            Program.CabecalhoOntheFly();
+            Console.WriteLine("### Deletar Companhia Aérea ###\n\n");
             Console.Write("\nDigite o CNPJ que deseja excluir: ");
             this.Cnpj = Console.ReadLine();
 
@@ -259,13 +312,13 @@ namespace OnTheFly_BD
                 string sql = $"Delete From Cnpj_Restrito Where Cnpj=('{this.Cnpj}');";
                 banco = new ConexaoBD();
                 banco.DeletarDado(conexaosql, sql);
-                Console.WriteLine("\n\nCNPJ excluido do cadastro de bloqueados!\nAperte enter para continuar...");
+                Console.WriteLine("CNPJ excluido do cadastro de bloqueados!\nAperte enter para continuar...");
                 Console.ReadKey();
                 MenuCiaAerea(conexaosql);
             }
             else
             {
-                Console.WriteLine("\n\nCNPJ inválido! Tente novamente.\nAperte enter para continuar.");
+                Console.WriteLine("CNPJ inválido! Tente novamente.\nAperte enter para continuar.");
                 Console.ReadKey();
                 MenuCiaAerea(conexaosql);
             }
@@ -275,13 +328,14 @@ namespace OnTheFly_BD
             do
             {
                 Console.Clear();
-                Console.WriteLine(">>> Localizar Companhia Aérea Bloqueada: <<<\n\n");
+                Program.CabecalhoOntheFly();
+                Console.WriteLine("### Localizar Companhia Aérea Bloqueada: ###\n\n");
                 Console.WriteLine("Digite o CNPJ buscado: ");
                 this.Cnpj = Console.ReadLine();
             } while (ValidarCnpj(this.Cnpj) == false || this.Cnpj.Length < 14);
             Console.Clear();
             string sql = $"SELECT Cnpj FROM Cnpj_Restrito WHERE CNPJ = '{this.Cnpj}';";
-            banco = new ConexaoBD();      
+            banco = new ConexaoBD();
             if (!string.IsNullOrEmpty(banco.LocalizarDado(conexaosql, sql, 3)))
             {
                 Console.WriteLine("Aperte enter para sair.");

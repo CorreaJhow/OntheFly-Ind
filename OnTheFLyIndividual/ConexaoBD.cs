@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnTheFLyIndividual
 {
@@ -69,7 +65,8 @@ namespace OnTheFLyIndividual
         {
             switch (op)
             {
-                case 1: //Localizar Passageiro
+                case 1: 
+                    #region Localizar Passageiro
                     String recebe = "";
                     try
                     {
@@ -99,7 +96,9 @@ namespace OnTheFLyIndividual
                         Console.WriteLine(ex.Message);
                     }
                     return recebe;
-                case 2: //Localizar Voo
+                #endregion
+                case 2: 
+                    #region Localizar Voo
                     recebe = "";
                     try
                     {
@@ -127,7 +126,9 @@ namespace OnTheFLyIndividual
                         Console.WriteLine(ex.Message);
                     }
                     return recebe;
-                case 3: //Localizar Bloqueadas
+                #endregion
+                case 3: 
+                    #region Localizar Bloqueadas
                     recebe = "";
                     try
                     {
@@ -155,7 +156,9 @@ namespace OnTheFLyIndividual
                         Console.WriteLine(ex.Message);
                     }
                     return recebe;
-                case 4: //localizar cia 
+                #endregion
+                case 4: 
+                    #region Localizar Cias
                     recebe = "";
                     try
                     {
@@ -185,7 +188,9 @@ namespace OnTheFLyIndividual
                         Console.WriteLine(ex.Message);
                     }
                     return recebe;
-                case 5: //LER A PASSAGEM
+                #endregion
+                case 5: 
+                    #region Localizar Passagem 
                     recebe = "";
                     try
                     {
@@ -214,7 +219,9 @@ namespace OnTheFLyIndividual
                         Console.WriteLine(ex.Message);
                     }
                     return recebe;
-                case 6: //localizar restritos 
+                #endregion
+                case 6:
+                    #region Localizar Restritos
                     recebe = "";
                     try
                     {
@@ -239,7 +246,9 @@ namespace OnTheFLyIndividual
                         Console.WriteLine(ex.Message);
                     }
                     return recebe;
+                #endregion
                 case 7:
+                    #region Localizar Venda
                     recebe = "";
                     try
                     {
@@ -264,6 +273,35 @@ namespace OnTheFLyIndividual
                             }
                         }
                         conexao.Close();
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    return recebe;
+                #endregion
+                case 8:
+                    recebe = "";
+                    try
+                    {
+                        conecta.Open();
+                        SqlCommand cmd = new SqlCommand(sql, conecta);
+                        SqlDataReader reader = null;
+                        using (reader = cmd.ExecuteReader())
+                        {
+                            Console.WriteLine("\n\t### Voo Localizado ###\n");
+                            while (reader.Read())
+                            { 
+                                recebe = reader.GetString(0);
+                                Console.WriteLine("Inscricao ANAC: {0}", reader.GetString(0)); 
+                                Console.WriteLine("CNPJ: {0}", reader.GetString(1)); 
+                                Console.WriteLine("Data de Cadastro: {0}", reader.GetDateTime(2).ToShortDateString()); 
+                                Console.WriteLine("Situacao: {0}", reader.GetString(3)); 
+                                Console.WriteLine("Ultima Venda: {0}", reader.GetDateTime(4).ToShortDateString()); 
+                                Console.WriteLine("Capacidade: {0}", reader.GetInt32(5)); 
+                            }
+                        }
+                        conecta.Close();
                     }
                     catch (SqlException ex)
                     {
